@@ -1,4 +1,5 @@
 ---
+layout: '../../layouts/MarkdownLayout.astro'
 title: 'My First Blog Post'
 short-title:
 subtitle: 'This is the first post of my new Astro blog.'
