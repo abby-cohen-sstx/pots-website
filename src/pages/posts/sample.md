@@ -1,8 +1,8 @@
 ---
 layout: '../../layouts/MarkdownLayout.astro'
-title: 'My First Blog Post'
-header: 'Header'
-subheader: 'This is the first post of my new Astro blog.'
+title: 'My Title'
+header: 'My header'
+subheader: 'My subtitle'
 pubDate: 2022-07-01
 tags: ["tag 1", "tag2", "tag3"]
 ---

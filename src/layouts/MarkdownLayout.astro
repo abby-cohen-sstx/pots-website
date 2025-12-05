@@ -1,9 +1,26 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+
+import PageNavigation from "./components/markdown_components/PageNavigation.astro";
+
 const { frontmatter } = Astro.props;
 ---
 
 <BaseLayout pageTitle={frontmatter.title}>
+    <div>
+    <header>
+        <PageNavigation />
+    </header>
+
+
+    <slot />
+    </div>
+</BaseLayout>
+
+<style>
+
+</style>
+
     <!--Main navigation -->
     <!--Full header -->
         <!--Nav to other pages -->
@@ -29,7 +46,3 @@ const { frontmatter } = Astro.props;
         <!--Heavy dividing line -->
         <!--References title -->
         <!--Reference list -->
-
-
-    <slot />
-</BaseLayout>
