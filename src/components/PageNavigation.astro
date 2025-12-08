@@ -1,0 +1,39 @@
+<nav class="pageNavContainer">
+    <a style="font-weight: bold;">Section Title</a>
+    <div class="pageSwapContainer">
+        <a>&#8592; Previous page</a>
+        <a>Next page &#8594;</a>
+    </div>
+</nav>
+
+<style>
+    .pageNavContainer {
+        width: 100%;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .pageNavContainer a:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .pageSwapContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 60px;
+    }
+
+    @media only screen and (max-width: 700px) {
+        .pageNavContainer {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+    }
+</style>

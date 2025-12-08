@@ -1,23 +1,37 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-
-import PageNavigation from "./components/markdown_components/PageNavigation.astro";
+import PageNavigation from '../components/PageNavigation.astro';
 
 const { frontmatter } = Astro.props;
 ---
 
 <BaseLayout pageTitle={frontmatter.title}>
-    <div>
-    <header>
-        <PageNavigation />
-    </header>
-
-
+    <div class="markdownMainContainer">
+        <header>
+            <PageNavigation />
+            <h1>{frontmatter.title}</h1>
+        </header>
     <slot />
     </div>
 </BaseLayout>
 
 <style>
+    .markdownMainContainer {
+        width: 100%;
+        max-width: 900px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .markdownMainContainer header {
+        width: 100%;
+    }
+
+    .markdownMainContainer * {
+        text-align: left;
+    }
 
 </style>
 
