@@ -1,0 +1,39 @@
+<div class="expandFootnotesButton">
+    <div class="checkboxSquare"></div>
+    <span>Expand Footnotes</span>
+</div>
+
+<style>
+    .expandFootnotesButton {
+        margin-top: 40px;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .checkboxSquare {
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgb(217, 217, 217);
+        background-color: white;
+        border-radius: 5px;
+    }
+
+    .expandFootnotesButton:hover {
+        cursor: pointer;
+    }
+
+    .expandFootnotesButton:hover .checkboxSquare {
+        border-color: rgb(190, 190, 190);
+        background-color: rgb(235, 235, 235);
+    }
+
+    .expandFootnotesButton:hover span {
+        text-decoration: underline;
+    }
+
+
+</style>
