@@ -1,13 +1,57 @@
-<div class="linkShare">
-    <img src="../../">Icon</img>
-    <span>Share</span>
+---
+import placeholderImage from '/Users/abby/dev/pots-website/src/images/placeholder.jpg';
+---
 
-    <div>Icon</div>
-    <span>Link</span>
+<div class="linkShare">
+    <div class="shareContainer">
+        <img src={placeholderImage.src}></img>
+        <span>Share</span>
+    </div>
+
+    <div class="shareContainer">
+        <img src={placeholderImage.src}></img>
+        <span>Link</span>
+    </div>
 </div>
 
 <style>
     .linkShare {
-        border: 1px solid black;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+
+        gap: 20px;
     }
+
+    .shareContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+
+        border: 1px solid rgb(200, 200, 200);
+        border-radius: 5px;
+    }
+
+    .shareContainer * {
+        padding: 5px 5px;
+    }
+
+    .linkShare img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .shareContainer:hover {
+        cursor: pointer;
+        background-color: rgb(247, 247, 247);
+    }
+
+        @media only screen and (max-width: 700px) {
+            .linkShare span {
+                display: none;
+            }
+        }
+
 </style>
