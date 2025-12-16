@@ -1,7 +1,9 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-import PageNavigation from '../components/PageNavigation.astro';
-import ExpandFootnotes from '../components/ExpandFootnotes.astro';
+import PageNavigation from '../components/PageHeader/PageNavigation.astro';
+import ExpandFootnotes from '../components/PageHeader/ExpandFootnotes.astro';
+import LinkShareButtons from '../components/PageHeader/LinkShareButtons.astro';
+
 
 const { frontmatter } = Astro.props;
 ---
@@ -13,7 +15,14 @@ const { frontmatter } = Astro.props;
             <hr class="light-hr">
             <h1>{frontmatter.header}</h1>
             <h2>{frontmatter.subheader}</h2>
-            <ExpandFootnotes />
+            <div>
+                <ExpandFootnotes />
+                <div></div>
+                <div>
+                    <LinkShareButtons />
+                </div>
+            </div>
+            
         </header>
     <slot />
     </div>
