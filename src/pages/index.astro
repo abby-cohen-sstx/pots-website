@@ -1,7 +1,17 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+import { getCollection } from 'astro:content';
+const articles = await getCollection('articles');
+
+// https://docs.astro.build/en/guides/integrations-guide/mdx/#custom-components-with-imported-mdx
 ---
 
 <BaseLayout pageTitle={"Home"}>
 	<h1>Hello</h1>
+
+	{articles.map(article => (
+		<li><a href={`/articles/${article.id}`}>{article.data.title}</a></li>
+	))}
+
 </BaseLayout>
