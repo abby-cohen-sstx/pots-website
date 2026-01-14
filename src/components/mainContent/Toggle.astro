@@ -1,0 +1,11 @@
+---
+const { label = "Toggle" } = Astro.props;
+---
+
+<div>
+    <button>"open"</button>
+    <span>{label}</span>
+    <div>
+        <slot />
+    </div>
+</div>

@@ -1,4 +1,4 @@
 ---
 title: "My Title 2"
-layout: '../../layouts/MarkdownLayout.astro'
+layout: '/src/layouts/MarkdownLayout.astro'
 ---
