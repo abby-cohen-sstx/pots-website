@@ -14,7 +14,9 @@ import placeholderImage from '/Users/abby/dev/pots-website/src/images/placeholde
     </div>
 </div>
 
-<style>
+<style lang="scss">
+    @use "/src/styles/index" as *;
+
     .linkShare {
         display: flex;
         flex-direction: row;
@@ -48,7 +50,7 @@ import placeholderImage from '/Users/abby/dev/pots-website/src/images/placeholde
         background-color: rgb(247, 247, 247);
     }
 
-    @media only screen and (max-width: 700px) {
+    @media only screen and (max-width: $breakpoint) {
         .linkShare span {
             display: none;
         }
