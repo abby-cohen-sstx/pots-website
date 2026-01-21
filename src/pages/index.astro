@@ -8,10 +8,22 @@ const articles = await getCollection('articles');
 ---
 
 <BaseLayout pageTitle={"Home"}>
-	<h1>Hello</h1>
+	<div class="homeContainer">
+		<h1>Hello</h1>
 
-	{articles.map(article => (
-		<li><a href={`/articles/${article.id}`}>{article.data.title}</a></li>
-	))}
-
+		{articles.map(article => (
+			<li><a href={`/articles/${article.id}`}>{article.data.title}</a></li>
+		))}
+	</div>
 </BaseLayout>
+
+<style lang="scss">
+	@use "/src/styles/index" as *;
+
+	.homeContainer {
+		@include flex-center;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+</style>

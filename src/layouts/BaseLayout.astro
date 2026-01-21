@@ -1,7 +1,8 @@
 ---
 import "../styles/main.scss";
+import * as G from '@/components/general';
 
-import MainNavigation from '../components/MainNavigation.astro';
+// import MainNavigation from '../components/MainNavigation.astro';
 const { pageTitle } = Astro.props;
 ---
 <html lang="en">
@@ -11,38 +12,38 @@ const { pageTitle } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
+  </head>
 
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        text-align: center;
-      }
+  <body>
+    <nav>
+      <G.MainNavigation />
+    </nav>
+    <div class="baseContainer">
+      <div>
+        <slot />
+      </div>
+    </div>
+  </body>
+
+  <style lang="scss">
+    @use "/src/styles/index" as *;
 
       body, body > nav, body > div {
         width: 100vw;
       }
 
-      .mainContainer {
+      .baseContainer {
         width: 100%;
-        display: flex;
+        
+        @include flex-center;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
+
+        > div {
+          width: 100%;
+          max-width: $max-width;
+          padding: 20px 50px
+        }
       }
 
-    </style>
-
-  </head>
-  <body>
-    <nav>
-      <MainNavigation />
-    </nav>
-    <div class="mainContainer">
-      <div style="width: 100%; max-width: 1000px; padding: 20px 50px">
-        <slot />
-      </div>
-    </div>
-  </body>
+  </style>
 </html>

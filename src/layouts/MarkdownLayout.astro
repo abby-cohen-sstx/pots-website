@@ -1,9 +1,14 @@
 ---
-import BaseLayout from "./BaseLayout.astro";
+/*
+
 import PageNavigation from '../components/articleLayout/PageNavigation.astro';
 import ExpandFootnotes from '../components/articleLayout/ExpandFootnotes.astro';
 import LinkShareButtons from '../components/articleLayout/LinkShareButtons.astro';
 import MedicalDisclaimer from '../components/articleLayout/MedicalDisclaimer.astro';
+*/
+
+import BaseLayout from "./BaseLayout.astro";
+import * as M from '@/components/markdownTemplate';
 
 const { frontmatter } = Astro.props;
 
@@ -13,16 +18,16 @@ const { frontmatter } = Astro.props;
     <div class="markdownMainContainer">
         <header>
             <div class="bodyPadding">
-                <PageNavigation />
+                <M.PageNavigation />
                 <div style="margin-top:50px"></div>
 
                 <h1>{frontmatter.header}</h1>
                 <h2>{frontmatter.subheader}</h2>
                 <div class="headerButtonsContainer">
-                    <ExpandFootnotes />
+                    <M.ExpandFootnotes />
                     <div></div>
                     <div>
-                        <LinkShareButtons />
+                        <M.LinkShareButtons />
                     </div>
                 </div>
             </div>
@@ -37,9 +42,9 @@ const { frontmatter } = Astro.props;
         <footer>
             <hr class="light-hr">
             <div class="bodyPadding" style="display:flex; align-items:flex-start; flex-direction: column;">
-                <LinkShareButtons />
-                <PageNavigation />
-                <MedicalDisclaimer />
+                <M.LinkShareButtons />
+                <M.PageNavigation />
+                <M.MedicalDisclaimer />
             </div>
             <hr class="heavy-hr">
             <h1>References</h1>
@@ -49,14 +54,8 @@ const { frontmatter } = Astro.props;
     </div>
 </BaseLayout>
 
-<style>
-    h1 {
-
-    }
-
-    h2 {
-        font-weight: normal;
-    }
+<style lang="scss">
+    @use "/src/styles/index" as *;
 
     .bodyPadding {
         padding: 0px 5px;
