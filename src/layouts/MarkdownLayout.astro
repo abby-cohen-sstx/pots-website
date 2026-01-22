@@ -15,20 +15,17 @@ const { frontmatter } = Astro.props;
 ---
 
 <BaseLayout pageTitle={frontmatter.title}>
-    <div class="markdownMainContainer">
+    <div class="markdownContainer">
         <header>
             <div class="bodyPadding">
                 <M.PageNavigation />
-                <div style="margin-top:50px"></div>
 
                 <h1>{frontmatter.header}</h1>
                 <h2>{frontmatter.subheader}</h2>
+
                 <div class="headerButtonsContainer">
                     <M.ExpandFootnotes />
-                    <div></div>
-                    <div>
-                        <M.LinkShareButtons />
-                    </div>
+                    <M.LinkShareButtons />
                 </div>
             </div>
 
@@ -41,13 +38,16 @@ const { frontmatter } = Astro.props;
         
         <footer>
             <hr class="light-hr">
-            <div class="bodyPadding" style="display:flex; align-items:flex-start; flex-direction: column;">
-                <M.LinkShareButtons />
-                <M.PageNavigation />
+            <div class="bodyPadding footerButtonsContainer">
+                <M.LinkShareButtons /> <!--Need to make these not collapse after breakpoint -->
                 <M.MedicalDisclaimer />
+                <M.PageNavigation />
             </div>
             <hr class="heavy-hr">
-            <h1>References</h1>
+            <div class="bodyPadding">
+                <h1>References</h1>
+            </div>
+            
             
         </footer>
 
@@ -61,49 +61,17 @@ const { frontmatter } = Astro.props;
         padding: 0px 5px;
     }
 
-
-    .light-hr {
-        width: 100%;
-        height: 1px;
-        border-width: 0;
-        background-color: rgb(192, 192, 192);
-        margin: 20px 0px;
-    }
-
-    .heavy-hr {
-        width: 100%;
-        height: 1px;
-        border-width: 0;
-        background-color: rgb(118, 118, 118);
-        margin: 20px 0px;
-    }
-
-    .markdownMainContainer {
-        width: 100%;
-        max-width: 900px;
-
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .markdownMainContainer header {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .markdownMainContainer * {
-        text-align: left;
+    .markdownContainer {
+        @include flex-column;
     }
 
     .headerButtonsContainer {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
+        @include flex-row-space-between;
         margin-top: 40px;
+    }
+
+    .footerButtonsContainer {
+        @include flex-column-start;
     }
 
 </style>
