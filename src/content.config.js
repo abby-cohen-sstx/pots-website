@@ -15,7 +15,7 @@ const articles = defineCollection({
         title: z.string(),
         header: z.string(),
         subheader: z.string(),
-        pubDate: z.string().date(),
+        pubDate: z.date(),
         tags: z.array(z.string()),
     }),
 

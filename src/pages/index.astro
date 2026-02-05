@@ -4,16 +4,36 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from 'astro:content';
 const articles = await getCollection('articles');
 
+const tag1Articles = await getCollection('articles', ({ data }) => {
+  return data.tags.includes('tag 1');
+});
+
+const tag2Articles = await getCollection('articles', ({ data }) => {
+  return data.tags.includes('tag 2');
+});
+
 // https://docs.astro.build/en/guides/integrations-guide/mdx/#custom-components-with-imported-mdx
 ---
 
 <BaseLayout pageTitle={"Home"}>
 	<div class="homeContainer">
 		<h1>Hello</h1>
+		<span>All articles:</span>
 
 		{articles.map(article => (
 			<li><a href={`/articles/${article.id}`}>{article.data.title}</a></li>
 		))}
+
+		<span>Articles with tag 1:</span>
+		{tag1Articles.map(article => (
+			<li><a href={`/articles/${article.id}`}>{article.data.title}</a></li>
+		))}
+
+		<span>Articles with tag 2:</span>
+		{tag2Articles.map(article => (
+			<li><a href={`/articles/${article.id}`}>{article.data.title}</a></li>
+		))}
+		
 	</div>
 </BaseLayout>
 
