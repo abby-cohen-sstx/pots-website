@@ -10,6 +10,15 @@ import { z } from 'astro/zod';
 // 4. Define your collection(s)
 const articles = defineCollection({
     loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/pages/articles" }),
+    schema: z.object({
+        layout: z.string(),
+        title: z.string(),
+        header: z.string(),
+        subheader: z.string(),
+        pubDate: z.string().date(),
+        tags: z.array(z.string()),
+    }),
+
 });
 
 // 5. Export a single `collections` object to register your collection(s)
