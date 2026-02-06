@@ -1,13 +1,15 @@
+// https://docs.astro.build/en/guides/content-collections/
+
 // 1. Import utilities from `astro:content`
 import { defineCollection } from 'astro:content';
 
-// 2. Import loader(s)
-import { glob, file } from 'astro/loaders';
+// 2. Import loader
+import { glob } from 'astro/loaders';
 
 // 3. Import Zod
 import { z } from 'astro/zod';
 
-// 4. Define your collection(s)
+// 4. Define your collection
 const articles = defineCollection({
     loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/pages/articles" }),
     schema: z.object({
@@ -17,12 +19,10 @@ const articles = defineCollection({
         subheader: z.string(),
         pubDate: z.date(),
         tags: z.array(z.string()),
+        collection: z.enum(["1", "2", "3"]),
     }),
 
 });
 
 // 5. Export a single `collections` object to register your collection(s)
 export const collections = { articles };
-
-// ID is the filename by default (ex. const articleData = await getEntry('articles', 'sample'))
-// https://docs.astro.build/en/guides/content-collections/
