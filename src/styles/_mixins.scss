@@ -4,7 +4,7 @@
   justify-content: center;
 }
 
-@mixin flex-column {
+@mixin flex-column-center {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -16,9 +16,23 @@
   align-items: flex-start;
 }
 
+@mixin flex-row-center {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
 @mixin flex-row-space-between {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+}
+
+@mixin flex-row-space-evenly {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
   align-items: center;
 }
