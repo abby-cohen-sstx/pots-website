@@ -2,7 +2,6 @@
 import NavIcons from "./NavIcons.astro"
 import NavHome from "./NavHome.astro"
 import NavLinks from "./NavLinks.astro"
-import NavMenu from "./NavMenu.astro"
 ---
 
 <div class="container">
@@ -10,12 +9,14 @@ import NavMenu from "./NavMenu.astro"
         <div class="navWide">
             <NavHome />
             <NavLinks />
-            <NavIcons />
+            <NavIcons showSearch={true}/>
         </div>
 
         <div class="navNarrow">
             <div style="justify-self: left">
-                <NavMenu />
+                <div class="menuContainer">
+                    <button id="menuToggle">Menu</button>
+                </div>
             </div>
 
             <div style="justify-self: center">
@@ -23,14 +24,14 @@ import NavMenu from "./NavMenu.astro"
             </div>
             
             <div style="justify-self: right">
-                <NavIcons />
+                <NavIcons showSearch={false}/>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="popupContainer">
-        <NavLinks />
-    </div>
+<div class="popupMenu" id="popupMenu">
+    Hello I am a popupm menu
 </div>
 
 <style lang="scss">
@@ -47,16 +48,6 @@ import NavMenu from "./NavMenu.astro"
         background-color: #fefcfc;
     }
 
-    .popupContainer {
-        width: 100vw;
-        height: 60px;
-
-        border-bottom: 1px solid #515151;
-        background-color: #ffffff;
-
-        @include flex-center;
-    }
-
     .navWide, .navNarrow {
         width: 100%;
         height: 100%;
@@ -69,12 +60,20 @@ import NavMenu from "./NavMenu.astro"
     .navNarrow {
         display: none;
 
-        grid-template-columns: auto auto auto;
+        grid-template-columns: 1fr auto 1fr;
         align-items: center;
+    }
 
-        > div {
-            border: 1px solid #ff0000;
-        }
+    .popupMenu {
+        width: 100vw;
+        height: 100vh;
+
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #d0d0d0;
+
+        display: none;
     }
 
     @media only screen and (max-width: $breakpoint) {
@@ -87,3 +86,12 @@ import NavMenu from "./NavMenu.astro"
     }
     
 </style>
+
+<script is:inline >
+    const menuToggle = document.getElementById("menuToggle");
+    const popupMenu = document.getElementById("popupMenu");
+
+    menuToggle.addEventListener("click", () => {
+        popupMenu.style.display = "block";
+    })
+</script>

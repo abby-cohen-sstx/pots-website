@@ -1,3 +1,17 @@
 <div class="homeContainer">
     <a href="/">Name & Logo</a>
 </div>
+
+<style lang="scss">
+    @use "/src/styles/index" as *;
+    
+    .homeContainer {
+        a {
+            text-decoration: none;
+
+            &:hover {
+                text-decoration-line: underline;
+            }
+        }
+    }
+</style>

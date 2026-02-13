@@ -1,4 +1,8 @@
+---
+const { showSearch} = Astro.props
+---
+
 <div class="iconsContainer">
-    <button>Search</button>
     <button>Settings</button>
+    {showSearch && <button>Search</button>}
 </div>
