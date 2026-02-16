@@ -16,7 +16,7 @@ const { frontmatter } = Astro.props;
 
 <BaseLayout pageTitle={frontmatter.title}>
     <div class="markdownContainer">
-        <header>
+        <header style="width: 100%">
             <div class="bodyPadding">
                 <M.PageNavigation />
 
@@ -36,7 +36,7 @@ const { frontmatter } = Astro.props;
             <slot />
         </div>
         
-        <footer>
+        <footer style="width: 100%">
             <hr class="light-hr">
             <div class="bodyPadding footerButtonsContainer">
                 <M.LinkShareButtons /> <!--Need to make these not collapse after breakpoint -->

@@ -2,6 +2,7 @@
 import NavIcons from "./NavIcons.astro"
 import NavHome from "./NavHome.astro"
 import NavLinks from "./NavLinks.astro"
+import SearchBar from "./SearchBar.astro"
 ---
 
 <div class="container">
@@ -14,9 +15,7 @@ import NavLinks from "./NavLinks.astro"
 
         <div class="navNarrow">
             <div style="justify-self: left">
-                <div class="menuContainer">
-                    <button id="menuToggle">Menu</button>
-                </div>
+                <button id="openNavMenu">Menu</button>
             </div>
 
             <div style="justify-self: center">
@@ -31,11 +30,22 @@ import NavLinks from "./NavLinks.astro"
 </div>
 
 <div class="popupMenu" id="popupMenu">
-    Hello I am a popupm menu
+    <div class="buttonContainer">
+        <button id="closeNavMenu">Close</button>
+    </div>
+
+    <div class="searchContainer">
+        <SearchBar />
+    </div>
+    
+    
+
 </div>
 
 <style lang="scss">
     @use "/src/styles/index" as *;
+
+    $nav-height: 45px;
 
     .container {
         @include flex-column-center;
@@ -43,7 +53,7 @@ import NavLinks from "./NavLinks.astro"
 
     .navContainer {
         width: 100vw;
-        height: 45px;
+        height: $nav-height;
         border-bottom: 1px solid #d0d0d0;
         background-color: #fefcfc;
     }
@@ -69,11 +79,27 @@ import NavLinks from "./NavLinks.astro"
         height: 100vh;
 
         position: fixed;
-        top: 0;
-        left: 0;
+        inset: 0;
+        overflow: auto;
+        
         background-color: #d0d0d0;
 
         display: none;
+
+        .is-open {
+            @include flex-column-center;
+        }
+
+        .buttonContainer {
+            height: $nav-height;
+            width: 100%;
+            @include flex-row-start;
+        }
+
+        .searchContainer {
+            width: 100%;
+            @include flex-row-center;
+        }
     }
 
     @media only screen and (max-width: $breakpoint) {
@@ -88,10 +114,47 @@ import NavLinks from "./NavLinks.astro"
 </style>
 
 <script is:inline >
-    const menuToggle = document.getElementById("menuToggle");
+    const open = document.getElementById("openNavMenu");
+    const close = document.getElementById("closeNavMenu");
     const popupMenu = document.getElementById("popupMenu");
 
-    menuToggle.addEventListener("click", () => {
+    open.addEventListener("click", event => {
+        console.log(event)
+        popupMenu.classList.add("is-open");
         popupMenu.style.display = "block";
+        lockScroll();
     })
+
+    close.addEventListener("click", () => {
+        popupMenu.classList.remove("is-open");
+        popupMenu.style.display = "none";
+        unlockScroll();
+    })
+
+
+    let scrollY = 0;
+
+    function lockScroll() {
+        scrollY = window.scrollY; // Saves current scroll position
+        document.body.style.position = "fixed"; // Prevents scrolling by anchoring body to viewport. Causes scroll to jump to top of page (see next line)
+        document.body.style.top = `-${scrollY}px`; // Offsets body to maintain current scroll position
+
+        // Prevent layout shifts:
+        document.body.style.left = "0";
+        document.body.style.right = "0";
+        document.body.style.width = "100%";
+    }
+
+    function unlockScroll() {
+        // Remove inline styles to allow body to scroll again
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.right = "";
+        document.body.style.width = "";
+
+        // Reset scroll to previous position when menu was opened
+        window.scrollTo(0, scrollY);
+    }
+
 </script>
