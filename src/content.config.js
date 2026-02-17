@@ -9,6 +9,8 @@ import { glob } from 'astro/loaders';
 // 3. Import Zod
 import { z } from 'astro/zod';
 
+import { ARTICLE_CATEGORY_IDS } from "./lib/articleCategories"; // adjust path
+
 // 4. Define your collection
 const articles = defineCollection({
     loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/pages/articles" }),
@@ -19,9 +21,8 @@ const articles = defineCollection({
         subheader: z.string(),
         pubDate: z.date(),
         tags: z.array(z.string()),
-        collection: z.enum(["1", "2", "3"]),
+        collection: z.enum(ARTICLE_CATEGORY_IDS),
     }),
-
 });
 
 // 5. Export a single `collections` object to register your collection(s)

@@ -3,13 +3,35 @@ import NavIcons from "./NavIcons.astro"
 import NavHome from "./NavHome.astro"
 import NavLinks from "./NavLinks.astro"
 import SearchBar from "./SearchBar.astro"
+
+
+import { ARTICLE_CATEGORY_IDS, ARTICLE_CATEGORY_NAME } from "@/lib/articleCategories";
+
+const count = ARTICLE_CATEGORY_IDS.length;
+const ids = ARTICLE_CATEGORY_IDS;
+const names = ARTICLE_CATEGORY_IDS.map((id) => ARTICLE_CATEGORY_NAME[id]);
+
+console.log(count)
+console.log(ids)
+console.log(names)
+
 ---
 
 <div class="container">
     <div class="navContainer">
         <div class="navWide">
             <NavHome />
-            <NavLinks />
+            <div class="navLinksContainer">
+                <ul>
+                    {ARTICLE_CATEGORY_IDS.map((id) => (
+                        <li>
+                        <a href={`/articles/category/${id}/`}>
+                            {ARTICLE_CATEGORY_NAME[id]}
+                        </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
             <NavIcons showSearch={true}/>
         </div>
 
@@ -38,7 +60,9 @@ import SearchBar from "./SearchBar.astro"
         <SearchBar />
     </div>
     
-    
+    <div>
+        <NavLinks class="columnLinks" />
+    </div>
 
 </div>
 
@@ -102,6 +126,18 @@ import SearchBar from "./SearchBar.astro"
         }
     }
 
+    .rowLinks {
+        @include flex-row-center;
+        gap: 40px;
+    }
+    
+    .columnLinks {
+        @include flex-column-center;
+        margin-top: 50px;
+        gap: 40px;
+        font-size: 40px;
+    }
+
     @media only screen and (max-width: $breakpoint) {
         .navWide {
             display: none;
@@ -118,8 +154,7 @@ import SearchBar from "./SearchBar.astro"
     const close = document.getElementById("closeNavMenu");
     const popupMenu = document.getElementById("popupMenu");
 
-    open.addEventListener("click", event => {
-        console.log(event)
+    open.addEventListener("click", () => {
         popupMenu.classList.add("is-open");
         popupMenu.style.display = "block";
         lockScroll();

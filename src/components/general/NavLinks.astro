@@ -1,4 +1,17 @@
-<div class="linksContainer">
+---
+const { class: className, ...rest } = Astro.props;
+import { ARTICLE_CATEGORY_IDS, ARTICLE_CATEGORY_NAME } from "@/lib/articleCategories";
+
+const count = ARTICLE_CATEGORY_IDS.length;
+const ids = ARTICLE_CATEGORY_IDS;
+const names = ARTICLE_CATEGORY_IDS.map((id) => ARTICLE_CATEGORY_NAME[id]);
+
+console.log(count)
+console.log(ids)
+console.log(names)
+---
+
+<div class={className} {...rest}>
     <a>Section 1</a>
     <a>Section 2</a>
     <a>Section 3</a>
@@ -8,9 +21,6 @@
     @use "/src/styles/index" as *;
 
     .linksContainer {
-        @include flex-row-center;
-        gap: 40px;
-
         a {
             cursor: pointer;
 
