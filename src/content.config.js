@@ -21,7 +21,7 @@ const articles = defineCollection({
         subheader: z.string(),
         pubDate: z.date(),
         tags: z.array(z.string()),
-        collection: z.enum(ARTICLE_CATEGORY_IDS),
+        collection: z.enum(["Collection1", "Collection2","Collection3"]),
     }),
 });
 

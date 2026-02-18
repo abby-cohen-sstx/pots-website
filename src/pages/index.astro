@@ -3,8 +3,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { ARTICLE_ORDER } from "./articles/order";
 
 
-import { getCollection } from 'astro:content';
+import { ARTICLE_CATEGORY_IDS, ARTICLE_CATEGORY_NAME } from "@/lib/articleCategories";
+
+const count = ARTICLE_CATEGORY_IDS.length;
+const ids = ARTICLE_CATEGORY_IDS;
+const names = ARTICLE_CATEGORY_IDS.map((id) => ARTICLE_CATEGORY_NAME[id]);
+
+
+import { getCollection, getEntry } from 'astro:content';
 const articles = await getCollection('articles');
+
+const article1 = await getEntry('articles', 'article-1');
 
 const tag1Articles = await getCollection('articles', ({ data }) => {
 	return data.tags.includes('tag 1');

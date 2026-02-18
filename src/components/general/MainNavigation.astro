@@ -22,15 +22,13 @@ console.log(names)
         <div class="navWide">
             <NavHome />
             <div class="navLinksContainer">
-                <ul>
+                <div>
                     {ARTICLE_CATEGORY_IDS.map((id) => (
-                        <li>
                         <a href={`/articles/category/${id}/`}>
                             {ARTICLE_CATEGORY_NAME[id]}
                         </a>
-                        </li>
                     ))}
-                </ul>
+                </div>
             </div>
             <NavIcons showSearch={true}/>
         </div>

@@ -1,0 +1,49 @@
+---
+import { getCollection } from "astro:content";
+import { ARTICLE_ORDER } from "../articles/order"; // adjust path to where order.ts lives
+
+export async function getStaticPaths() {
+  const collections = ["Collection1", "Collection2", "Collection3"];
+  return collections.map((c) => ({
+    params: { collection: c.toLowerCase() },
+    props: { collectionEnum: c },
+  }));
+}
+
+const { collectionEnum } = Astro.props;
+
+const entries = await getCollection("articles", ({ data }) => data.collection === collectionEnum);
+
+// Build a fast lookup: id -> position
+/*
+const orderIndex = new Map<string, number>();
+ARTICLE_ORDER.forEach((id, i) => orderIndex.set(id, i));
+*/
+
+// <string, number> = <article id, position in ARTICLE_ORDER>
+const articlePositions = new Map<string, number>(
+	ARTICLE_ORDER.map((id, i) => [id, i])
+);
+
+entries.sort((a, b) => {
+	// If an article isn't in ARTICLE_ORDER, assign it a very large rank so it appears at the end
+	const rankA = articlePositions.get(a.id) ?? Number.MAX_SAFE_INTEGER;
+	const rankB = articlePositions.get(b.id) ?? Number.MAX_SAFE_INTEGER;
+
+	// If this returns a negative value, a comes before b. If it returns a positive value, b comes before a
+	// a.id.localeCompare(b.id) is used as a tiebreaker so that articles not in ARTICLE_ORDER are sorted alphabetically (when rankA - rankB = 0)
+	return rankA - rankB || a.id.localeCompare(b.id);
+});
+
+console.log(entries)
+---
+
+<h1>{collectionEnum}</h1>
+
+<ul>
+  {entries.map((e) => (
+    <li>
+      <a href={`/articles/${e.id}`}>{e.data.title}</a>
+    </li>
+  ))}
+</ul>
