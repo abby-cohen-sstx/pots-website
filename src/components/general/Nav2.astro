@@ -1,39 +1,42 @@
 ---
 import { getCollection } from "astro:content";
-import { ARTICLE_ORDER } from "@/pages/articles/order";
-
+import { ARTICLE_ORDER } from "@/pages/articles/articleOrder";
 
 const articles = await getCollection("articles");
 
-// Group by collection and sort within each group
-const byCollection = articles.reduce((acc, entry) => {
-  const c = entry.data.collection; // "Collection1" | "Collection2" | "Collection3"
-  (acc[c] ??= []).push(entry);
-  return acc;
-}, /** @type {Record<string, typeof articles>} */ ({}));
+// Group by collection
+const byCollection = articles.reduce((accumulator, article) => {
+  const collection = article.data.collection;
 
-for (const c of Object.keys(byCollection)) {
-  byCollection[c].sort(
-    (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
-  );
+  // Adds a new array for this collection if it doesn't exist, then pushes the article into the correct collection group
+  accumulator[collection] = accumulator[collection] || []; accumulator[collection].push(article);
+
+  return accumulator;
+}, /** @type {Record<string, typeof articles>} */ ({})); // {collection1: [{article1},{article2}], collection2: [...], ...}
+
+// Lookup table: id (article name) -> position in ARTICLE_ORDER
+const orderIndex = new Map<string, number>();
+ARTICLE_ORDER.forEach((id, index) => orderIndex.set(id, index));
+
+// Sort by custom order defined by ARTICLE_ORDER
+for (const collection of Object.keys(byCollection)) {
+byCollection[collection].sort((a, b) => {
+  const ai = orderIndex.get(a.id);
+  const bi = orderIndex.get(b.id);
+
+  // Both explicitly ordered:
+  if (ai !== undefined && bi !== undefined) return ai - bi;
+
+  // Priortize explicitly ordered articles over non-explicitly ordered:
+  if (ai !== undefined) return -1;
+  if (bi !== undefined) return 1;
+
+  // Neither ordered:
+  return 0;
+});
 }
 
-// <string, number> = <article id, position in ARTICLE_ORDER>
-const articlePositions = new Map<string, number>(
-	ARTICLE_ORDER.map((id, i) => [id, i])
-); 
-
-const sortedArticles = [...articles].sort((a, b) => {
-	// If an article isn't in ARTICLE_ORDER, assign it a very large rank so it appears at the end
-	const rankA = articlePositions.get(a.id) ?? Number.MAX_SAFE_INTEGER;
-	const rankB = articlePositions.get(b.id) ?? Number.MAX_SAFE_INTEGER;
-
-	// If this returns a negative value, a comes before b. If it returns a positive value, b comes before a
-	// a.id.localeCompare(b.id) is used as a tiebreaker so that articles not in ARTICLE_ORDER are sorted alphabetically (when rankA - rankB = 0)
-	return rankA - rankB || a.id.localeCompare(b.id);
-});
-
-// Keep a stable order (matches your enum)
+// Keep a stable order for collections. Should match enum in content.config.js
 const collections = ["Collection1", "Collection2", "Collection3"];
 ---
 
@@ -50,7 +53,7 @@ const collections = ["Collection1", "Collection2", "Collection3"];
         <ul class="dropdown-menu" role="list" aria-label={`${c} articles`}>
           {(byCollection[c] ?? []).map((entry) => (
             <li>
-              <a class="dropdown-item" href={`/articles/${entry.id}`}>
+              <a class="dropdown-item" href={entry.slug}>
                 <span class="title">{entry.data.title}</span>
                 <span class="date">
                   {entry.data.pubDate.toLocaleDateString("en-US", {

@@ -1,71 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { ARTICLE_ORDER } from "./articles/order";
 
-
-import { ARTICLE_CATEGORY_IDS, ARTICLE_CATEGORY_NAME } from "@/lib/articleCategories";
-
-const count = ARTICLE_CATEGORY_IDS.length;
-const ids = ARTICLE_CATEGORY_IDS;
-const names = ARTICLE_CATEGORY_IDS.map((id) => ARTICLE_CATEGORY_NAME[id]);
-
-
-import { getCollection, getEntry } from 'astro:content';
-const articles = await getCollection('articles');
-
-const article1 = await getEntry('articles', 'article-1');
-
-const tag1Articles = await getCollection('articles', ({ data }) => {
-	return data.tags.includes('tag 1');
-});
-
-const tag2Articles = await getCollection('articles', ({ data }) => {
-	return data.tags.includes('tag 2');
-});
-
-// <string, number> = <article id, position in ARTICLE_ORDER>
-const articlePositions = new Map<string, number>(
-	ARTICLE_ORDER.map((id, i) => [id, i])
-);
-
-const sortedArticles = [...articles].sort((a, b) => {
-	// If an article isn't in ARTICLE_ORDER, assign it a very large rank so it appears at the end
-	const rankA = articlePositions.get(a.id) ?? Number.MAX_SAFE_INTEGER;
-	const rankB = articlePositions.get(b.id) ?? Number.MAX_SAFE_INTEGER;
-
-	// If this returns a negative value, a comes before b. If it returns a positive value, b comes before a
-	// a.id.localeCompare(b.id) is used as a tiebreaker so that articles not in ARTICLE_ORDER are sorted alphabetically (when rankA - rankB = 0)
-	return rankA - rankB || a.id.localeCompare(b.id);
-});
-
-// console.log("Sorted articles:", sortedArticles.map(a => a.id));
-
-// https://docs.astro.build/en/guides/integrations-guide/mdx/#custom-components-with-imported-mdx
 ---
 
 <BaseLayout pageTitle={"Home"}>
 	<div class="homeContainer">
 		<h1>Hello</h1>
-		<span>All articles:</span>
-
-		{articles.map(article => (
-			<li><a href={`/articles/${article.id}`}>{article.data.title}</a></li>
-		))}
-
-		<span>Articles with tag 1:</span>
-		{tag1Articles.map(article => (
-			<li><a href={`/articles/${article.id}`}>{article.data.title}</a></li>
-		))}
-
-		<span>Articles with tag 2:</span>
-		{tag2Articles.map(article => (
-			<li><a href={`/articles/${article.id}`}>{article.data.title}</a></li>
-		))}
-
-		<span>Sorted articles:</span>
-		{sortedArticles.map(article => (
-			<li><a href={`/articles/${article.id}`}>{article.data.title}</a></li>
-		))}
 		
 	</div>
 </BaseLayout>

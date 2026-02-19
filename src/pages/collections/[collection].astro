@@ -1,49 +1,47 @@
 ---
 import { getCollection } from "astro:content";
-import { ARTICLE_ORDER } from "../articles/order"; // adjust path to where order.ts lives
+import { ARTICLE_ORDER } from "../articles/articleOrder";
 
 export async function getStaticPaths() {
   const collections = ["Collection1", "Collection2", "Collection3"];
-  return collections.map((c) => ({
-    params: { collection: c.toLowerCase() },
-    props: { collectionEnum: c },
+  return collections.map((collection) => ({
+    params: { collection: collection.toLowerCase() },
+    props: { collectionEnum: collection },
   }));
 }
 
-const { collectionEnum } = Astro.props;
+const { collectionEnum } = Astro.props; // Display name of current collection
 
-const entries = await getCollection("articles", ({ data }) => data.collection === collectionEnum);
+const articles = await getCollection("articles", ({ data }) => data.collection === collectionEnum);
 
-// Build a fast lookup: id -> position
-/*
+// Lookup table: id (article name) -> position in ARTICLE_ORDER
 const orderIndex = new Map<string, number>();
-ARTICLE_ORDER.forEach((id, i) => orderIndex.set(id, i));
-*/
+ARTICLE_ORDER.forEach((id, index) => orderIndex.set(id, index));
 
-// <string, number> = <article id, position in ARTICLE_ORDER>
-const articlePositions = new Map<string, number>(
-	ARTICLE_ORDER.map((id, i) => [id, i])
-);
+// Sort by custom order defined by ARTICLE_ORDER
+articles.sort((a, b) => {
+  const ai = orderIndex.get(a.id);
+  const bi = orderIndex.get(b.id);
 
-entries.sort((a, b) => {
-	// If an article isn't in ARTICLE_ORDER, assign it a very large rank so it appears at the end
-	const rankA = articlePositions.get(a.id) ?? Number.MAX_SAFE_INTEGER;
-	const rankB = articlePositions.get(b.id) ?? Number.MAX_SAFE_INTEGER;
+  // Both explicitly ordered:
+  if (ai !== undefined && bi !== undefined) return ai - bi;
 
-	// If this returns a negative value, a comes before b. If it returns a positive value, b comes before a
-	// a.id.localeCompare(b.id) is used as a tiebreaker so that articles not in ARTICLE_ORDER are sorted alphabetically (when rankA - rankB = 0)
-	return rankA - rankB || a.id.localeCompare(b.id);
+  // Priortize explicitly ordered articles over non-explicitly ordered:
+  if (ai !== undefined) return -1;
+  if (bi !== undefined) return 1;
+
+  // Neither ordered:
+  return 0;
 });
 
-console.log(entries)
 ---
 
 <h1>{collectionEnum}</h1>
 
 <ul>
-  {entries.map((e) => (
+  {articles.map((article) => (
     <li>
-      <a href={`/articles/${e.id}`}>{e.data.title}</a>
+      <a href={`/articles/${article.id}`}>{article.data.title}</a>
     </li>
   ))}
 </ul>
