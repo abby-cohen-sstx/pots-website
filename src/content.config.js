@@ -9,8 +9,6 @@ import { glob } from 'astro/loaders';
 // 3. Import Zod
 import { z } from 'astro/zod';
 
-import { ARTICLE_CATEGORY_IDS } from "./pages/articles/articleCategories"; // adjust path
-
 // 4. Define your collection
 const articles = defineCollection({
     loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/pages/articles" }),
