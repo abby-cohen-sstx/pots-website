@@ -18,8 +18,9 @@ const articles = defineCollection({
         header: z.string(),
         subheader: z.string(),
         pubDate: z.date(),
-        tags: z.array(z.string()),
+        // tags: z.array(z.string()),
         collection: z.enum(["Collection1", "Collection2","Collection3"]),
+        type: z.enum(["Overviews", "Deep Dives, Resources"])
     }),
 });
 
