@@ -1,1 +1,1 @@
-export { default as MainNavigation } from "./MainNavigation.astro";
+export { default as Nav3 } from "./Nav3.astro";
