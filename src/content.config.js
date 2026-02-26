@@ -19,8 +19,8 @@ const articles = defineCollection({
         subheader: z.string(),
         pubDate: z.date(),
         // tags: z.array(z.string()),
-        collection: z.enum(["Collection1", "Collection2","Collection3"]),
-        type: z.enum(["Overviews", "Deep Dives, Resources"])
+        collection: z.enum(["About POTS", "Symptom Management","Resources"]),
+        type: z.enum(["Overviews", "Deep Dives", "Resources"])
     }),
 });
 

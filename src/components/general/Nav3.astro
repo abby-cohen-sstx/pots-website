@@ -7,6 +7,50 @@ import SearchBar from "./SearchBar.astro"
 
 
 const collections = ["About POTS", "Symptom Management", "Resources"];
+
+// Load all articles
+import { getCollection } from "astro:content";
+import { ARTICLE_ORDER } from "@/pages/articles/articleOrder";
+
+const articles = await getCollection("articles");
+
+// Lookup table: id (article name) -> position in ARTICLE_ORDER
+const orderIndex = new Map<string, number>();
+ARTICLE_ORDER.forEach((id, index) => orderIndex.set(id, index));
+
+// Sort all articles
+articles.sort((a, b) => {
+  const ai = orderIndex.get(a.id);
+  const bi = orderIndex.get(b.id);
+
+  // Both explicitly ordered:
+  if (ai !== undefined && bi !== undefined) return ai - bi;
+
+  // Priortize explicitly ordered articles over non-explicitly ordered:
+  if (ai !== undefined) return -1;
+  if (bi !== undefined) return 1;
+
+  // Neither ordered:
+  return 0;
+});
+
+// Group by collection
+const byCollection = articles.reduce((accumulator, article) => {
+    const collection = article.data.collection;
+    const type = article.data.type;
+
+    // Intiialize collection if it doesn't exist:
+    accumulator[collection] = accumulator[collection] || {};
+
+    // Initialize type array if it doesn't exist:
+    accumulator[collection][type] = accumulator[collection][type] || [];
+
+    // Push article into the correct collection and type group
+    accumulator[collection][type].push(article);
+
+    return accumulator;
+}, /** @type {Record<string, typeof articles>} */ ({})); // {collection1: [{article1},{article2}], collection2: [...], ...}
+
 ---
 
 <div class="outerContainer" id="outerNavContainer">
@@ -14,7 +58,7 @@ const collections = ["About POTS", "Symptom Management", "Resources"];
         <div class="navWide">
             <NavHome />
             <div class="navLinks" id="wideNavLinks" style="background-color:aqua">
-                {collections.map((collection) => (
+                {collections.map(collection => (
                     <a href={`/collections/${collection.toLowerCase()}`} style="margin: 0em 1em;" id={collection}>
                         {collection}
                     </a>
@@ -27,7 +71,19 @@ const collections = ["About POTS", "Symptom Management", "Resources"];
         </div>
 
         <div class="widePopup">
-            abcdefg
+            <div>
+                {collections.map(collection => {
+                    const types = Object.keys(byCollection[collection] ?? {});
+
+
+                    console.log(types)
+                    types.map(type => {
+                        return (
+                            <h2>{type}</h2>
+                        )
+                    })
+                })}
+            </div>
         </div>
 
         <div class="navNarrow">
@@ -104,7 +160,9 @@ const collections = ["About POTS", "Symptom Management", "Resources"];
 
         .widePopup {
             width: 100%;
-            background-color: aqua
+            background-color: rgb(255, 255, 255);
+            border: 1px solid #d0d0d0;
+            padding: 1rem;
         }
 
         @media only screen and (max-width: $breakpoint) {
