@@ -7,6 +7,7 @@ import SearchBar from "./SearchBar.astro"
 
 
 const collections = ["About POTS", "Symptom Management", "Resources"];
+const ARTICLES_DISPLAY_LIMIT = 4;
 
 // Load all articles
 import { getCollection } from "astro:content";
@@ -53,35 +54,50 @@ const byCollection = articles.reduce((accumulator, article) => {
 
 ---
 
-<div class="outerContainer" id="outerNavContainer">
+<div id="outerNavContainer">
     <div class="topNav">
         <div class="navWide">
             <NavHome />
-            <div class="navLinks" id="wideNavLinks" style="background-color:aqua">
+            <ul id="wideNavLinks" style="background-color:aqua">
                 {collections.map(collection => (
-                    <a href={`/collections/${collection.toLowerCase()}`} style="margin: 0em 1em;" id={collection}>
-                        {collection}
-                    </a>
+                    <li>
+                        <a href={`/collections/${collection.toLowerCase()}`} style="padding: 1.5rem 1rem;" id={`linkTo${collection}`}>
+                            {collection}
+                        </a>
+                    </li>
                 ))}
-            </div>
+            </ul>
             <div>
                 <SettingsIcon />
                 <SearchIcon />
             </div>
         </div>
 
-        <div class="widePopup">
+        <div id="widePopup">
             <div>
                 {collections.map(collection => {
                     const types = Object.keys(byCollection[collection] ?? {});
 
+                    return(
+                        <div class="collectionContainer" id={`containerFor${collection}`} style="display: none;">
+                            {types.map(type => (
+                                <div class="typeContainer">
+                                    <h2>{type}</h2>
 
-                    console.log(types)
-                    types.map(type => {
-                        return (
-                            <h2>{type}</h2>
-                        )
-                    })
+                                    <ul>
+                                        {(byCollection[collection]?.[type] ?? []).slice(0, ARTICLES_DISPLAY_LIMIT).map(article => (
+                                            <li>
+                                                <a href={`/articles/${article.id}`}>
+                                                    {article.data.title}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+                    )
+                    
                 })}
             </div>
         </div>
@@ -124,12 +140,55 @@ const byCollection = articles.reduce((accumulator, article) => {
         lastY = currentY;
     });
 
+    const wideNavLinks = document.getElementById("wideNavLinks");
+    const widePopup = document.getElementById("widePopup");
+
+    let canClose = true;
+
+    wideNavLinks.addEventListener("mouseover", (event) => {
+        if (event.target.tagName === "A") {
+            widePopup.style.display = "flex";
+            
+            const id = event.target.id.split("linkTo")[1]; // Extract collection name from link id (e.g. "About POTS" from "linkToAbout POTS")
+            const collectionContainer = document.getElementById(`containerFor${id}`); // Get corresponding collection container (e.g. "containerForAbout POTS")
+            const allContainers = widePopup.getElementsByClassName("collectionContainer");
+
+            if(collectionContainer) {
+                // Hide all other collection containers
+                for (const container of allContainers) {
+                    if (container !== collectionContainer) {
+                        container.style.display = "none";
+                    }
+                }
+
+                // Show the relevant collection container
+                collectionContainer.style.display = "block";
+            }
+
+            console.log(collectionContainer)
+        }
+    });
+
+    widePopup.addEventListener("mouseover", () => {
+        canClose = false; // Prevents popup from closing when hovering over it
+    });
+
+    widePopup.addEventListener("mouseout", () => {
+        canClose = true; // Allows popup to close when mouse leaves it
+    });
+
+    wideNavLinks.addEventListener("mouseout", (event) => {
+        if (event.target.tagName === "A" && canClose) {
+            widePopup.style.display = "none";
+        }
+    });
+
 </script>
 
 <style lang="scss">
     @use "/src/styles/index" as *;
 
-    .outerContainer {
+    #outerNavContainer {
         width: 100vw;
 
         transition: transform 0.3s ease-in-out;
@@ -158,11 +217,19 @@ const byCollection = articles.reduce((accumulator, article) => {
             align-items: center;
         }
 
-        .widePopup {
+        #widePopup {
             width: 100%;
             background-color: rgb(255, 255, 255);
             border: 1px solid #d0d0d0;
             padding: 1rem;
+
+            @include flex-row-center;
+
+            display: none;
+
+            .collectionContainer {
+                @include flex-row-center;
+            }
         }
 
         @media only screen and (max-width: $breakpoint) {
@@ -175,11 +242,17 @@ const byCollection = articles.reduce((accumulator, article) => {
         }
     }
 
-    .navLinks a {
-        text-decoration: none;
+    #wideNavLinks {
+        @include flex-row-center;
+        list-style: none;
 
-        &:hover {
-            text-decoration: underline;
+        a {
+            text-decoration: none;
+            margin-right: -1px; // Fixes slight gap between links that causes mouseout when hovering between them
+
+            &:hover {
+                text-decoration: underline;
+            }
         }
     }
 
