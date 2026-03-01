@@ -33,7 +33,11 @@ const { frontmatter } = Astro.props;
         </header>
 
         <div class="bodyPadding">
-            <slot />
+            <main>
+                <article>
+                    <slot />
+                </article>
+            </main>
         </div>
         
         <footer style="width: 100%">

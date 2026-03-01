@@ -4,6 +4,8 @@ import * as G from '@/components/general';
 
 const { pageTitle } = Astro.props;
 ---
+
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -14,9 +16,7 @@ const { pageTitle } = Astro.props;
   </head>
 
   <body>
-    <nav>
-      <G.Nav3 />
-    </nav>
+    <G.MainNav />
     <div class="baseContainer">
       <div>
         <slot />
@@ -27,14 +27,8 @@ const { pageTitle } = Astro.props;
   <style lang="scss">
     @use "/src/styles/index" as *;
 
-    .menu-popup-open {
-      html {
-        overflow: hidden;
-      }
-
-      body {
-        overflow: hidden;
-      }
+    html {
+      scrollbar-gutter: stable both-edges;
     }
 
     html, body {
@@ -43,7 +37,7 @@ const { pageTitle } = Astro.props;
     }
 
     body, body > nav, body > div {
-      width: 100vw;
+      width: 100%;
     }
 
     .baseContainer {
@@ -56,11 +50,6 @@ const { pageTitle } = Astro.props;
         max-width: $max-width;
         padding: 20px 50px
       }
-    }
-
-    nav {
-      position: sticky;
-      top: 0px;
     }
 
   </style>

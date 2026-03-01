@@ -1,10 +1,10 @@
 ---
 import { getCollection } from "astro:content";
-import { ARTICLE_ORDER } from "../articles/articleOrder";
+import { ARTICLE_ORDER } from "@/constants/articleOrder";
+import { COLLECTION_LIST } from "@/constants/collectionList"
 
 export async function getStaticPaths() {
-  const collections = ["Collection1", "Collection2", "Collection3"];
-  return collections.map((collection) => ({
+  return COLLECTION_LIST.map((collection) => ({
     params: { collection: collection.toLowerCase() },
     props: { collectionEnum: collection },
   }));

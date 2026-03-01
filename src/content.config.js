@@ -9,6 +9,8 @@ import { glob } from 'astro/loaders';
 // 3. Import Zod
 import { z } from 'astro/zod';
 
+import { COLLECTION_LIST } from "@/constants/collectionList"
+
 // 4. Define your collection
 const articles = defineCollection({
     loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/pages/articles" }),
@@ -19,7 +21,7 @@ const articles = defineCollection({
         subheader: z.string(),
         pubDate: z.date(),
         // tags: z.array(z.string()),
-        collection: z.enum(["About POTS", "Symptom Management","Resources"]),
+        collection: z.enum(COLLECTION_LIST),
         type: z.enum(["Overviews", "Deep Dives", "Resources"])
     }),
 });
