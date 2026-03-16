@@ -57,7 +57,7 @@ const byCollection = articles.reduce((accumulator, article) => {
     <div class="topNav">
 
         <!--Default nav bar on wide screens -->
-        <ul class="navWide">
+        <ul class="wideNav">
             <li><NavHome /></li>
             <li>
                 <!--List of collections -->
@@ -65,10 +65,10 @@ const byCollection = articles.reduce((accumulator, article) => {
                     {COLLECTION_LIST.map(collection => (
                         <li class="collectionLink">
                             <span style="padding: 1rem 1rem;" id={`linkTo${collection}`}>
-                                <a href={`/collections/${collection.toLowerCase()}`}>
-                                    {collection}
-                                </a>
-                                <button id={`buttonFor${collection}`} style="background:none; width: 1.5rem; height:1.5rem; border:none">&#129034;</button>
+                                <a href={`/collections/${collection.toLowerCase()}`}>{collection}</a>
+                                <button id={`buttonFor${collection}`}>
+                                    
+                                </button>
                             </span>
                         </li>
                     ))}
@@ -110,7 +110,7 @@ const byCollection = articles.reduce((accumulator, article) => {
         </div>
 
         <!--Default nav bar on narrow screens -->
-        <ul class="navNarrow">
+        <ul class="narrowNav">
             <li style="position: fixed; left: 1rem; top: 1rem;">
                 <label for="narrowMenuToggle">Menu</label>
             </li>
@@ -129,7 +129,7 @@ const byCollection = articles.reduce((accumulator, article) => {
 <!--Saves narrow popup state without javascript -->
 <input type="checkbox" id="narrowMenuToggle" />
 
-<!--Appears when the menu button is pressed on navNarrow -->
+<!--Appears when the menu button is pressed on narrowNav -->
 <nav id="narrowPopup">
     <ul style="grid-template-columns: 1fr auto 1fr; align-items: center; list-style: none; width: 100%; min-height: 3rem;">
         <li style="position: fixed; left: 1rem; top: 1rem;">
@@ -319,81 +319,99 @@ const byCollection = articles.reduce((accumulator, article) => {
 
     $nav-height: 3rem;
 
+    /* Top nav bar */
     #outerNavContainer {
         position: sticky;
         top: 0px;
         width: 100vw;
 
         transition: transform 0.15s ease-in-out;
+
+        .topNav {
+            width: 100%;
+            height: $nav-height;
+            border-bottom: 1px solid #d0d0d0;
+            background-color: #fefcfc;
+
+        }
     }
 
-    .topNav {
+    .wideNav, .narrowNav {
         width: 100%;
-        height: $nav-height;
-        border-bottom: 1px solid #d0d0d0;
-        background-color: #fefcfc;
+        height: 100%;
 
+        list-style-type: none;
+    }
 
-        .navWide, .navNarrow {
-            width: 100%;
-            height: 100%;
-
-            list-style-type: none;
-        }
-
-        .navWide {
-            @include flex-row-space-evenly;
-
-            .collectionLink {
-                background-color: aqua;
-            }
-            .collectionLink:hover {
-                cursor: help;
-            }
-        }
-
-        #widePopup {
-            width: 100%;
-            background-color: rgb(255, 255, 255);
-            border-bottom: 1px solid #6a6a6a;
-            padding: 1rem;
-
-            @include flex-row-center;
-
-            display: none;
-
-            .collectionContainer {
-                gap: 6rem;
-            }
-        }
-
-        .navNarrow {
-            display: none;
-
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-        }
-
-        @media only screen and (max-width: $breakpoint) {
-            .navWide {
-                display: none;
-            }
-            .navNarrow {
-                display: grid;
-            }
-        }
+    /* Wide version of the top nav bar */
+    .wideNav {
+        @include flex-row-space-evenly;
     }
 
     #wideNavLinks {
         @include flex-row-center;
         list-style: none;
 
-        span {
+        li {
             margin-right: -1px; // Fixes slight gap between links that causes mouseout when hovering between them
-        }
+            
+            a {
+                text-decoration: none;
+            }
 
-        a {
-            text-decoration: none;
+            button {
+                background:none; width: 1.5rem; height:1.5rem; border:none
+            }
+
+            &:hover {
+                cursor: pointer;
+
+                a {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+
+    #widePopup {
+        width: 100%;
+        background-color: rgb(255, 255, 255);
+        border-bottom: 1px solid #6a6a6a;
+        padding: 1rem;
+
+        @include flex-row-center;
+
+        display: none;
+
+        .collectionContainer {
+            gap: 6rem;
+        }
+    }
+
+
+    .narrowNav {
+        display: none;
+
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+    }
+
+    /* Switch between narrow and wide */
+    @media only screen and (max-width: $breakpoint) {
+        .wideNav {
+            display: none;
+        }
+        .narrowNav {
+            display: grid;
+        }
+    }
+
+    @media only screen and (min-width: $breakpoint) {
+        .wideNav {
+            display: flex;
+        }
+        .narrowNav {
+            display: none;
         }
     }
 
