@@ -1,9 +1,19 @@
 ---
+/* Next step: animate and polish display/summary toggles in narrow popup.
+https://blog.logrocket.com/styling-html-modern-css/
+
+Search could be next? (Eek!)
+*/
+
 import NavHome from "./NavHome.astro"
 
-import SettingsIcon from "./SettingsIcon.astro"
-import SearchIcon from "./SearchIcon.astro"
 import SearchBar from "./SearchBar.astro"
+
+import Arrow from "@/images/NavArrow.svg"
+import OpenMenuIcon from "@/images/OpenMenuIcon.svg"
+import CloseMenuIcon from "@/images/CloseMenuIcon.svg"
+import SearchIcon from "@/images/SearchIcon.svg"
+import SettingsIcon from "@/images/SettingsIcon.svg"
 
 const ARTICLES_DISPLAY_LIMIT = 4;
 
@@ -64,10 +74,10 @@ const byCollection = articles.reduce((accumulator, article) => {
                 <ul id="wideNavLinks">
                     {COLLECTION_LIST.map(collection => (
                         <li class="collectionLink">
-                            <span style="padding: 1rem 1rem;" id={`linkTo${collection}`}>
+                            <span id={`linkTo${collection}`}>
                                 <a href={`/collections/${collection.toLowerCase()}`}>{collection}</a>
                                 <button id={`buttonFor${collection}`}>
-                                    
+                                    <Arrow />
                                 </button>
                             </span>
                         </li>
@@ -75,9 +85,13 @@ const byCollection = articles.reduce((accumulator, article) => {
                 </ul>
             </li>
             
-            <li>
-                <SettingsIcon />
-                <SearchIcon />
+            <li class="wideIconsContainer">
+                <div class="svgContainer settingsContainer">
+                    <SettingsIcon />
+                </div>
+                <div class="svgContainer searchContainer">
+                    <SearchIcon />
+                </div>
             </li>
         </ul>
 
@@ -87,15 +101,15 @@ const byCollection = articles.reduce((accumulator, article) => {
                 const types = Object.keys(byCollection[collection] ?? {});
 
                 return(
-                    <div class="collectionContainer" id={`containerFor${collection}`} style="display: none;">
+                    <div class={`collectionContainer ${collection}`} id={`containerFor${collection}`} style="display: none;">
                         {types.map(type => (
                             <div class="typeContainer">
-                                <h2>{type}</h2>
+                                <h2>{type.toLocaleUpperCase()}</h2>
 
                                 <ul>
                                     {(byCollection[collection]?.[type] ?? []).slice(0, ARTICLES_DISPLAY_LIMIT).map(article => (
                                         <li>
-                                            <a href={`/articles/${article.id}`}>
+                                            <a href={`/articles/${article.id}`} class="linkInList">
                                                 {article.data.title}
                                             </a>
                                         </li>
@@ -111,15 +125,17 @@ const byCollection = articles.reduce((accumulator, article) => {
 
         <!--Default nav bar on narrow screens -->
         <ul class="narrowNav">
-            <li style="position: fixed; left: 1rem; top: 1rem;">
-                <label for="narrowMenuToggle">Menu</label>
+            <li class="narrowToggleContainer">
+                <label for="narrowMenuToggle" class="svgContainer">
+                    <OpenMenuIcon />
+                </label>
             </li>
 
-            <li style="position: fixed; left: 50%; top: 1rem; transform: translateX(-50%);">
+            <li>
                 <NavHome />
             </li>
             
-            <li style="position: fixed; right: 1rem; top: 1rem;">
+            <li class="svgContainer searchContainer">
                 <SearchIcon />
             </li>
         </ul>
@@ -127,46 +143,54 @@ const byCollection = articles.reduce((accumulator, article) => {
 </nav>
 
 <!--Saves narrow popup state without javascript -->
-<input type="checkbox" id="narrowMenuToggle" />
+<input type="checkbox" id="narrowMenuToggle" style="display:none" checked />
 
 <!--Appears when the menu button is pressed on narrowNav -->
 <nav id="narrowPopup">
-    <ul style="grid-template-columns: 1fr auto 1fr; align-items: center; list-style: none; width: 100%; min-height: 3rem;">
-        <li style="position: fixed; left: 1rem; top: 1rem;">
-            <label for="narrowMenuToggle">Close</label>
+    <ul class="popupHeader">
+        <li class="narrowToggleContainer">
+            <label for="narrowMenuToggle" class="svgContainer">
+                <CloseMenuIcon />
+            </label>
         </li>
 
-        <li style="position: fixed; left: 50%; top: 1rem; transform: translateX(-50%);">
+        <li>
             <NavHome />
+        </li>
+
+        <li class="svgContainer settingsContainer">
+            <SettingsIcon />
         </li>
     </ul>
 
     <SearchBar />
 
-    <menu style="list-style:none;">
+    <menu>
         <h1>Categories</h1>
         {COLLECTION_LIST.map(collection => {
         const types = Object.keys(byCollection[collection] ?? {});
 
         return(
-            <li class="collectionContainer" id={`containerFor${collection}`}>
+            <li id={`containerFor${collection}`} class="outerListItem">
                 <details>
-                    <summary style="font-size: 1.5rem;">{collection}</summary>
-                    {types.map(type => (
-                        <div class="typeContainer">
-                            <h2>{type}</h2>
+                    <summary>{collection}</summary>
+                    <div class="detailsPadding">
+                        {types.map(type => (
+                            <div class="narrowTypeContainer">
+                                <h2>{type.toLocaleUpperCase()}</h2>
 
-                            <ul>
-                                {(byCollection[collection]?.[type] ?? []).slice(0, ARTICLES_DISPLAY_LIMIT).map(article => (
-                                    <li>
-                                        <a href={`/articles/${article.id}`}>
-                                            {article.data.title}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
+                                <ul>
+                                    {(byCollection[collection]?.[type] ?? []).slice(0, ARTICLES_DISPLAY_LIMIT).map(article => (
+                                        <li>
+                                            <a href={`/articles/${article.id}`} class="linkInList">
+                                                {article.data.title}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
                 </details>
             </li>
         )
@@ -177,8 +201,8 @@ const byCollection = articles.reduce((accumulator, article) => {
     </menu>
 </nav>
 
-
 <script is:inline>
+    // --- HANDLE NAV OPENING, LOADING, AND CLOSING ---
 
     const wideNavLinks = document.getElementById("wideNavLinks");
     const widePopup = document.getElementById("widePopup");
@@ -188,15 +212,14 @@ const byCollection = articles.reduce((accumulator, article) => {
     const MENU_CLOSE_DELAY = 200; // ms
     
     let closeTimer = null;
+    let toggleTimer = null;
+    let canToggle = true;
     let currentCollection = null;
 
-    const LEFT_ARROW = "&#129034;";
-    const DOWN_ARROW = "&#129035;";
-
+    // Functions for wide nav popup
     function hidePopup() {
         widePopup.style.display = "none";
-
-        popupButtons.forEach(button => button.innerHTML = LEFT_ARROW);
+        popupButtons.forEach(button => button.style.transform = "rotate(90deg)");
     }
 
     function showPopup() {
@@ -215,10 +238,35 @@ const byCollection = articles.reduce((accumulator, article) => {
     function cancelCloseTimer() {
         if (closeTimer) {
             clearTimeout(closeTimer);
-            closeTimer = null;
         }
+        closeTimer = null;
     }
 
+    // Delay when the popup closes
+    wideNavLinks.addEventListener("mouseenter", cancelCloseTimer);
+    wideNavLinks.addEventListener("mouseleave", startCloseTimer);
+
+    widePopup.addEventListener("mouseenter", cancelCloseTimer);
+    widePopup.addEventListener("mouseleave", startCloseTimer);
+
+    // Functions for toggle arrows next to category links
+    function startToggleTimer() {
+        cancelToggleTimer();
+        canToggle = false;
+        toggleTimer = setTimeout(() => {
+            canToggle = true;
+        }, 1)
+    }
+
+    function cancelToggleTimer() {
+        if (toggleTimer) {
+            clearTimeout(toggleTimer);
+        }
+        toggleTimer = null;
+        canToggle = true;
+    }
+
+    // Loads collection into wide nav popup
     function loadCollection(collection) {
         const collectionContainer = document.getElementById(`containerFor${collection}`);
 
@@ -239,51 +287,49 @@ const byCollection = articles.reduce((accumulator, article) => {
                 const buttonCollection = button.id.replace(/^buttonFor/, "");
 
                 if (buttonCollection === collection) {
-                    button.innerHTML = DOWN_ARROW;
+                    button.style.transform = "rotate(180deg)";
                 } else {
-                    button.innerHTML = LEFT_ARROW;
+                    button.style.transform = "rotate(90deg)";
                 }
             });
         }
     }
 
+    // Open nav menu on mouse hover or touchpad tap
+    wideNavLinks.querySelectorAll("li").forEach(link => {
+        link.addEventListener("mouseenter", (event) => {
+            const span = event.target.querySelectorAll("span")[0]
 
-    wideNavLinks.addEventListener("mouseover", (event) => {
-        const span = event.target.closest("span");
+            if (span && wideNavLinks.contains(span)) {
+                showPopup();
 
-        if (span && wideNavLinks.contains(span)) {
-            showPopup();
+                const collection = span.id.replace(/^linkTo/, "");
+                loadCollection(collection);
+                startToggleTimer();
+            }
+            });
+    })
 
-            const collection = span.id.replace(/^linkTo/, "");
-            loadCollection(collection);
-        }
-    });
-
-    // Use mouseenter/leave on the nav links and popup to implement a delayed close
-    wideNavLinks.addEventListener("mouseenter", cancelCloseTimer);
-    wideNavLinks.addEventListener("mouseleave", startCloseTimer);
-
-    widePopup.addEventListener("mouseenter", cancelCloseTimer);
-    widePopup.addEventListener("mouseleave", startCloseTimer);
-
+    // Toggle menu when arrows are clicked. canToggle prevents this from double-triggering with "mouseenter" for mobile users
     popupButtons.forEach(button => {
         button.addEventListener("click", () => {
             const collection = button.id.replace(/^buttonFor/, "");
 
-            if (currentCollection === collection) {
-                // If the clicked collection is already open, close the popup
+            if ((currentCollection === collection) & canToggle) {
                 hidePopup();
                 currentCollection = null;
+                cancelToggleTimer();
                 return;
             }
 
             loadCollection(collection);
             showPopup();
+            cancelToggleTimer();
         });
     });
 
+    // Close poppup if the user clicks/taps anywhere else on the page
     document.body.addEventListener("click", (event) => {
-        // If click is outside of nav links and popup, close the popup
         if (!wideNavLinks.contains(event.target) && !widePopup.contains(event.target)) {
             hidePopup();
         }
@@ -318,20 +364,74 @@ const byCollection = articles.reduce((accumulator, article) => {
     @use "/src/styles/index" as *;
 
     $nav-height: 3rem;
+    $arrow-size: .6rem;
+    $icon-size: 1.5rem;
+    $nav-bar-background: #fefcfc;
+    $nav-bar-border: rgb(193, 193, 193);
+    $link-underline: #3e3e3e;
+
+    svg {
+        width: $icon-size;
+        height: $icon-size;
+    }
+
+    .svgContainer {
+        display: block;
+        width: $icon-size;
+        height: $icon-size;
+
+        &:hover {
+            cursor:pointer;
+        }
+    }
+
+    .searchContainer {
+        transition: transform .15s ease-in-out;
+
+        &:hover {
+            transform: rotate(15deg);
+        }
+    }
+
+    .settingsContainer {
+        transition: transform .3s ease-in-out;
+
+        &:hover {
+            transform: rotate(180deg);
+        }
+    }
+
+    .linkInList {
+        font-size: 1.1rem;
+        margin-bottom: .3rem;
+        padding: .2rem .2rem .2rem 0rem;
+
+        text-decoration: none;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+
+        &:hover {
+            text-decoration: underline;
+            text-decoration-color: $link-underline;
+        }
+    }
 
     /* Top nav bar */
     #outerNavContainer {
         position: sticky;
         top: 0px;
-        width: 100vw;
+        width: 100%;
 
         transition: transform 0.15s ease-in-out;
 
         .topNav {
             width: 100%;
             height: $nav-height;
-            border-bottom: 1px solid #d0d0d0;
-            background-color: #fefcfc;
+            border-bottom: 1px solid $nav-bar-border;
+            background-color: $nav-bar-background;
 
         }
     }
@@ -346,6 +446,11 @@ const byCollection = articles.reduce((accumulator, article) => {
     /* Wide version of the top nav bar */
     .wideNav {
         @include flex-row-space-evenly;
+
+        .wideIconsContainer {
+            @include flex-row-space-between;
+            gap: .5rem;
+        }
     }
 
     #wideNavLinks {
@@ -353,48 +458,102 @@ const byCollection = articles.reduce((accumulator, article) => {
         list-style: none;
 
         li {
-            margin-right: -1px; // Fixes slight gap between links that causes mouseout when hovering between them
-            
-            a {
-                text-decoration: none;
-            }
-
-            button {
-                background:none; width: 1.5rem; height:1.5rem; border:none
-            }
+            margin-right: -1px; // Fixes slight gap between links when moving mouse between them
 
             &:hover {
                 cursor: pointer;
 
                 a {
                     text-decoration: underline;
+                    text-decoration-color: $link-underline;
+
+                }
+            }
+            
+            span {
+                padding: 1rem 1rem;
+
+                display: flex;
+                @include flex-row-center;
+                gap: .2rem;
+            }
+
+            a {
+                text-decoration: none;
+            }
+
+            button {
+                border: none;
+                background: none;
+                padding: .5rem;
+
+                transform: rotate(90deg);
+                transition: transform .1s ease-out;
+
+                svg {
+                    width: $arrow-size;
+                    height: $arrow-size;
+                }
+
+                &:hover {
+                    cursor: pointer;
                 }
             }
         }
     }
 
+    /* Popup below wide nav bar */
     #widePopup {
         width: 100%;
-        background-color: rgb(255, 255, 255);
-        border-bottom: 1px solid #6a6a6a;
-        padding: 1rem;
+        background-color: $nav-bar-background;
+        border-bottom: 1px solid $nav-bar-border;
+        padding: 1.5rem .5rem 2.5rem .5rem;
 
         @include flex-row-center;
 
         display: none;
 
         .collectionContainer {
-            gap: 6rem;
+            width: 80%;
+            max-width: 1000px;
+            @include flex-row-space-between;
+
+            .typeContainer {
+                width: 45%;
+
+                h2 {
+                    font-size: 1.2rem;
+                    margin-bottom: .4rem;
+                }
+
+                ul {
+                    list-style: none;
+                }
+            }
+        }
+
+        .Resources {
+            @include flex-row-center;
         }
     }
 
-
-    .narrowNav {
+    /* Narrow version of the top nav bar. Also applies to header of narrow popup */
+    .narrowNav, .popupHeader {
         display: none;
+        @include flex-row-space-between;
+        padding-inline: 20px;
 
-        grid-template-columns: 1fr auto 1fr;
-        align-items: center;
+        .narrowToggleContainer {
+            svg {
+                transition: transform .2s ease-out;
+
+                &:hover {
+                    transform: scale(1.05);
+                }
+            }
+        }
     }
+
 
     /* Switch between narrow and wide */
     @media only screen and (max-width: $breakpoint) {
@@ -402,7 +561,7 @@ const byCollection = articles.reduce((accumulator, article) => {
             display: none;
         }
         .narrowNav {
-            display: grid;
+            display: flex;
         }
     }
 
@@ -416,9 +575,7 @@ const byCollection = articles.reduce((accumulator, article) => {
     }
 
 
-    #narrowMenuToggle {
-        display: none;
-    }
+    /* --- POPUP MENU FOR NARROW SCREENS ---
 
     /* show narrow popup when checkbox is checked */
     #narrowMenuToggle:checked ~ #narrowPopup {
@@ -431,21 +588,71 @@ const byCollection = articles.reduce((accumulator, article) => {
     }
 
     #narrowPopup {
-        width: 100vw;
+        width: 100%;
         height: 100vh;
 
         position: fixed;
         inset: 0;
-        background-color: #ffffff;
-        overflow: auto;
+        background-color: $nav-bar-background;
+        overflow-y: scroll;
         z-index: 1000;
         pointer-events: auto; /* ensure it captures clicks */
 
-        
         display: none;
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
+        gap: 2rem; /* adjust when search bar is finalized */
+
+        .popupHeader {
+            width: 100%;
+            list-style: none;
+            min-height: $nav-height;
+            border-bottom: 1px solid $nav-bar-border;
+        }
+
+        menu {
+            list-style: none;
+            width: 80%;
+
+            h1 {
+                margin-bottom: 2rem;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+                margin: 2rem 0rem 1rem 0rem;
+            }
+
+            .outerListItem {
+                margin-bottom: .7rem;
+                padding: .5rem .5rem .5rem 0rem;
+
+                summary {
+                    font-size: 1.4rem;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
+
+                .detailsPadding {
+                    padding-left: 2.5rem;
+
+                    .narrowTypeContainer {
+                        margin-bottom: 4rem;
+                    }
+                }
+                
+                ul {
+                    list-style: none;
+
+                    a {
+                        margin-bottom: .3rem;
+                    }
+                }
+            }
+        }
 
     }
 
