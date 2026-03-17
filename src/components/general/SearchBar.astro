@@ -1,5 +1,44 @@
-<search>
+---
+import SearchIcon from "@/images/SearchIcon.svg"
+
+/* https://medium.com/100-days-in-kyoto-to-create-a-web-app-with-google/day-17-styling-a-search-box-like-googles-e17dd9074abe */
+---
+
+<div class="searchBox">
     <form>
-        <input type="text" id="search" placeholder="Search..." />
+        <SearchIcon aria-hidden="true" />
+        <input
+        id="sitewideSearch"
+        aria-label="Search for an article"
+        inputmode="search"
+        placeholder="Search..."
+        type="search"
+        />
     </form>
-</search>
+</div>
+
+<style lang="scss">
+    @use "/src/styles/index" as *;
+
+    $search-width: 25rem;
+    $icon-size: 1.5rem;
+    $search-height: 1rem;
+
+    .searchBox {
+        z-index: 100;
+        width: $search-width;
+        height: $search-height;
+
+        input {
+            height: 100%;
+            width: 100%;
+            border: 1px solid #cdcdcd;
+            border-radius: calc($search-height / 2)
+        }
+    }
+
+    svg {
+        width: $icon-size;
+        height: $icon-size;
+    }
+</style>

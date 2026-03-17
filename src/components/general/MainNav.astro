@@ -1,12 +1,5 @@
 ---
-/* Next step: animate and polish display/summary toggles in narrow popup.
-https://blog.logrocket.com/styling-html-modern-css/
-
-Search could be next? (Eek!)
-*/
-
 import NavHome from "./NavHome.astro"
-
 import SearchBar from "./SearchBar.astro"
 
 import Arrow from "@/images/NavArrow.svg"
@@ -89,8 +82,13 @@ const byCollection = articles.reduce((accumulator, article) => {
                 <div class="svgContainer settingsContainer">
                     <SettingsIcon />
                 </div>
-                <div class="svgContainer searchContainer">
-                    <SearchIcon />
+                <div class="outerSearchContainer">
+                    <SearchBar />
+                    <!-- 
+                    <div class="svgContainer searchContainer">
+                        <SearchIcon />
+                    </div>
+                    -->
                 </div>
             </li>
         </ul>
@@ -143,7 +141,7 @@ const byCollection = articles.reduce((accumulator, article) => {
 </nav>
 
 <!--Saves narrow popup state without javascript -->
-<input type="checkbox" id="narrowMenuToggle" style="display:none" checked />
+<input type="checkbox" id="narrowMenuToggle" style="display:none" />
 
 <!--Appears when the menu button is pressed on narrowNav -->
 <nav id="narrowPopup">
@@ -192,6 +190,7 @@ const byCollection = articles.reduce((accumulator, article) => {
                         ))}
                     </div>
                 </details>
+                <hr />
             </li>
         )
         
@@ -621,26 +620,77 @@ const byCollection = articles.reduce((accumulator, article) => {
 
             h2 {
                 font-size: 1.2rem;
-                margin: 2rem 0rem 1rem 0rem;
+                margin-bottom: .5rem;
+            }
+
+            /* Browser supports interpolate-size */
+            @supports (interpolate-size: allow-keywords) {
+                details {
+                    interpolate-size: allow-keywords; /* Required to animate block-size: auto */
+                }
+
+                /* closed state */
+                details::details-content {
+                    block-size: 0;
+
+                    /* Browser sets content-visibility: hidden when closed, so it needs to be part of the transition */
+                    transition: content-visibility, block-size;
+                    transition-duration: .6s;
+
+                    transition-behavior: allow-discrete; /* Gradual transition for content-visibility */
+                    overflow: hidden;
+                }
+
+                /* open state */
+                details[open]::details-content {
+                    block-size: auto;
+                }
             }
 
             .outerListItem {
-                margin-bottom: .7rem;
                 padding: .5rem .5rem .5rem 0rem;
 
                 summary {
                     font-size: 1.4rem;
+                    list-style: none;
+                    position: relative;
 
-                    &:hover {
-                        cursor: pointer;
+                    /* Space for custom icon */
+                    padding-left: 1.5rem;
+
+                    cursor: pointer;
+
+                    /* Replace default arrow with custom arrow and animate open/close */
+                    /* Closed state */
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        left: 0;
+                        top: 50%;
+                        transform: translateY(-50%) rotate(90deg);
+
+                        width: 1rem;
+                        height: 1rem;
+
+                        /* Must set background insteaad of list-style-image for customization */
+                        background-image: url("@/images/NavArrow.svg");
+                        background-size: contain;
+                        background-repeat: no-repeat;
+                        transition: transform 0.4s ease;
+                        pointer-events: none;
                     }
+                }
+
+                /* Rotate arrow when open */
+                details[open] summary::before {
+                    transform: translateY(-50%) rotate(180deg);
                 }
 
                 .detailsPadding {
                     padding-left: 2.5rem;
 
                     .narrowTypeContainer {
-                        margin-bottom: 4rem;
+                        margin-block: 2.5rem;
                     }
                 }
                 
@@ -651,6 +701,14 @@ const byCollection = articles.reduce((accumulator, article) => {
                         margin-bottom: .3rem;
                     }
                 }
+
+                hr {
+                    margin-block: .5rem 1.5rem;
+                }
+
+                    summary::marker {
+                        width: $arrow-size;
+                    }
             }
         }
 
