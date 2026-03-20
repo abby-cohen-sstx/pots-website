@@ -2,23 +2,39 @@
 import SearchIcon from "@/images/SearchIcon.svg"
 import CloseIcon from "@/images/CloseIcon.svg"
 
+export interface Props {
+  fullscreen: "show" | "hide";
+}
+const { fullscreen } = Astro.props as Props;
+
+/* Next steps:
+1. Look up a tutorial for implementing search in Astro
+2. Pick a search library
+3. Design visuals and intended functionality in Figma (remember to include a way to close when in fullscreen mode)
+4. Implement in index.astro
+5. Connect search icons to open search bar
+6. Consider animations and final polish
+*/
 ---
 
-<form class="wrapper" id="searchWrapper">
-    <SearchIcon class="searchIcon" id="searchIcon" />
-    <input class="searchBox" placeholder="Search" type="text" id="navSearch">
-    <CloseIcon class="clearIcon" id="clearIcon" />
-</form>
+<div class={`blur ${fullscreen}`}>
+    <div class={`outerContainer ${fullscreen}`}>
+        <form class="wrapper" id="searchWrapper">
+            <SearchIcon class="searchIcon" id="searchIcon" />
+            <input class="searchBox" placeholder="Search..." type="text" id="navSearch">
+            <CloseIcon class="clearIcon" id="clearIcon" />
+        </form>
+    </div>
+</div>
 
 <script>
-    import initSearchBar from "./search"
-    initSearchBar()
+
 </script>
 
 <style lang="scss">
     @use "/src/styles/index" as *;
 
-    $default-width: 100px;
+    $default-width: 300px;
     $icon-size: 1.25rem;
     $icon-padding: .4rem;
     $search-height: calc($icon-size + ($icon-padding * 2));
@@ -29,42 +45,22 @@ import CloseIcon from "@/images/CloseIcon.svg"
         --default-width: #{$default-width};
         --search-height: #{$search-height};
     }
-    
 
-    .wrapper {
-        position: relative;
-        width: $search-height;
-        height: $search-height;
-
-        svg {
-            position: absolute;
-            width: $icon-size;
-            height: $icon-size;
-            cursor: pointer;
-            top: $icon-top-pos;
-        }
-
-        .searchIcon {
-            left: $icon-padding;
-        }
-
-        .clearIcon {
-            right: $icon-padding;
-            display: none;
-        }
-
-        .searchBox {
-            border: 1px solid grey;
-            border-radius: calc($search-height / 2);
-            height: 100%;
-            width: 100%;
-            padding: 0;
-        }
+    .blur.show {
+        @include fullscreen-popup;
+        width: 100vw;
+        backdrop-filter: blur(4px);
+        @include flex-center;
     }
 
-    
-    
-/*
+    .outerContainer.show {
+        @include flex-center;
+        padding: 20px;
+        background-color: #ffffff;
+        border: 2px solid grey;
+        border-radius: 10px;
+    }
+
     .wrapper {
         position: relative;
         min-width: $default-width;
@@ -94,5 +90,40 @@ import CloseIcon from "@/images/CloseIcon.svg"
             padding-inline: $search-height;
         }
     }
-*/
+
+/*
+    .wrapper {
+        position: relative;
+        width: $search-height;
+        height: $search-height;
+
+        svg {
+            position: absolute;
+            width: $icon-size;
+            height: $icon-size;
+            cursor: pointer;
+            top: $icon-top-pos;
+        }
+
+        .searchIcon {
+            left: $icon-padding;
+        }
+
+        .clearIcon {
+            right: $icon-padding;
+            display: none;
+        }
+
+        .searchBox {
+            border: 1px solid grey;
+            border-radius: calc($search-height / 2);
+            height: 100%;
+            width: 100%;
+            padding: 0;
+
+            transition: min-width 1s ease;
+        }
+    }
+        */
+
 </style>

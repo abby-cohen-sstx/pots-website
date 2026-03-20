@@ -1,9 +1,9 @@
-import { getByID } from "@/globals/utilities";
+import * as u from "@/globals/utilities";
 
 export default function initMainNav() {
-    const outerContainer = getByID("outerNavContainer", HTMLElement); // Contains the entire nav (except narrowPopup)
-    const wideNavLinks = getByID("wideNavLinks", HTMLElement);
-    const widePopup = getByID("widePopup", HTMLElement);
+    const outerContainer = u.getByID("outerNavContainer", HTMLElement); // Contains the entire nav (except narrowPopup)
+    const wideNavLinks = u.getByID("wideNavLinks", HTMLElement);
+    const widePopup = u.getByID("widePopup", HTMLElement);
 
     const popupButtons = wideNavLinks.querySelectorAll<HTMLButtonElement>("button"); // Arrow buttons next to each cateogry
     const allContainers = widePopup.getElementsByClassName("collectionContainer"); // Containers for each collection represented in widePopup
@@ -142,4 +142,6 @@ export default function initMainNav() {
 
         lastY = currentY;
     });
+
+
 }

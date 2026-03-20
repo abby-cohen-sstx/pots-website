@@ -82,13 +82,8 @@ const byCollection = articles.reduce((accumulator, article) => {
                 <div class="svgContainer settingsContainer">
                     <SettingsIcon />
                 </div>
-                <div class="outerSearchContainer">
-                    <SearchBar />
-                    <!-- 
-                    <div class="svgContainer searchContainer">
-                        <SearchIcon />
-                    </div>
-                    -->
+                <div class="svgContainer searchContainer">
+                    <SearchIcon />
                 </div>
             </li>
         </ul>
@@ -134,7 +129,7 @@ const byCollection = articles.reduce((accumulator, article) => {
             </li>
             
             <li class="svgContainer searchContainer">
-                <SearchIcon />
+                <SearchIcon id="searchIcon" />
             </li>
         </ul>
     </div>
@@ -161,7 +156,7 @@ const byCollection = articles.reduce((accumulator, article) => {
         </li>
     </ul>
 
-    <SearchBar />
+    <SearchBar fullscreen="hide" />
 
     <menu>
         <h1>Categories</h1>
@@ -433,21 +428,15 @@ const byCollection = articles.reduce((accumulator, article) => {
     }
 
     #narrowPopup {
-        width: 100%;
-        height: 100vh;
-
-        position: fixed;
-        inset: 0;
-        background-color: $nav-bar-background;
-        overflow-y: scroll;
-        z-index: 1000;
-        pointer-events: auto; /* ensure it captures clicks */
+        @include fullscreen-popup;
 
         display: none;
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
         gap: 2rem; /* adjust when search bar is finalized */
+
+        background-color: $nav-bar-background;
 
         .popupHeader {
             width: 100%;
