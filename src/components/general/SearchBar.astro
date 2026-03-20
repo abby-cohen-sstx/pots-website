@@ -1,44 +1,98 @@
 ---
 import SearchIcon from "@/images/SearchIcon.svg"
+import CloseIcon from "@/images/CloseIcon.svg"
 
-/* https://medium.com/100-days-in-kyoto-to-create-a-web-app-with-google/day-17-styling-a-search-box-like-googles-e17dd9074abe */
 ---
 
-<div class="searchBox">
-    <form>
-        <SearchIcon aria-hidden="true" />
-        <input
-        id="sitewideSearch"
-        aria-label="Search for an article"
-        inputmode="search"
-        placeholder="Search..."
-        type="search"
-        />
-    </form>
-</div>
+<form class="wrapper" id="searchWrapper">
+    <SearchIcon class="searchIcon" id="searchIcon" />
+    <input class="searchBox" placeholder="Search" type="text" id="navSearch">
+    <CloseIcon class="clearIcon" id="clearIcon" />
+</form>
+
+<script>
+    import initSearchBar from "./search"
+    initSearchBar()
+</script>
 
 <style lang="scss">
     @use "/src/styles/index" as *;
 
-    $search-width: 25rem;
-    $icon-size: 1.5rem;
-    $search-height: 1rem;
+    $default-width: 100px;
+    $icon-size: 1.25rem;
+    $icon-padding: .4rem;
+    $search-height: calc($icon-size + ($icon-padding * 2));
+    $icon-top-pos: calc(($search-height - $icon-size) / 2);
 
-    .searchBox {
-        z-index: 100;
-        width: $search-width;
+    /* Access SCSS variables in JS */
+    :root {
+        --default-width: #{$default-width};
+        --search-height: #{$search-height};
+    }
+    
+
+    .wrapper {
+        position: relative;
+        width: $search-height;
         height: $search-height;
 
-        input {
+        svg {
+            position: absolute;
+            width: $icon-size;
+            height: $icon-size;
+            cursor: pointer;
+            top: $icon-top-pos;
+        }
+
+        .searchIcon {
+            left: $icon-padding;
+        }
+
+        .clearIcon {
+            right: $icon-padding;
+            display: none;
+        }
+
+        .searchBox {
+            border: 1px solid grey;
+            border-radius: calc($search-height / 2);
             height: 100%;
             width: 100%;
-            border: 1px solid #cdcdcd;
-            border-radius: calc($search-height / 2)
+            padding: 0;
         }
     }
 
-    svg {
-        width: $icon-size;
-        height: $icon-size;
+    
+    
+/*
+    .wrapper {
+        position: relative;
+        min-width: $default-width;
+        height: $search-height;
+
+        svg {
+            position: absolute;
+            width: $icon-size;
+            height: $icon-size;
+            cursor: pointer;
+            top: $icon-top-pos;
+        }
+
+        .searchIcon {
+            left: $icon-padding;
+        }
+
+        .clearIcon {
+            right: $icon-padding;
+        }
+
+        .searchBox {
+            border: 1px solid grey;
+            border-radius: calc($search-height / 2);
+            height: 100%;
+            width: 100%;
+            padding-inline: $search-height;
+        }
     }
+*/
 </style>

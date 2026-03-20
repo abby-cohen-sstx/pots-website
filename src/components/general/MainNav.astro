@@ -12,8 +12,8 @@ const ARTICLES_DISPLAY_LIMIT = 4;
 
 // Load all articles
 import { getCollection } from "astro:content";
-import { ARTICLE_ORDER } from "@/constants/articleOrder";
-import { COLLECTION_LIST } from "@/constants/collectionList"
+import { ARTICLE_ORDER } from "@/globals/articleOrder";
+import { COLLECTION_LIST } from "@/globals/collectionList"
 
 const articles = await getCollection("articles");
 
@@ -200,163 +200,9 @@ const byCollection = articles.reduce((accumulator, article) => {
     </menu>
 </nav>
 
-<script is:inline>
-    // --- HANDLE NAV OPENING, LOADING, AND CLOSING ---
-
-    const wideNavLinks = document.getElementById("wideNavLinks");
-    const widePopup = document.getElementById("widePopup");
-    const popupButtons = wideNavLinks.querySelectorAll("button");
-    const allContainers = widePopup.getElementsByClassName("collectionContainer");
-
-    const MENU_CLOSE_DELAY = 200; // ms
-    
-    let closeTimer = null;
-    let toggleTimer = null;
-    let canToggle = true;
-    let currentCollection = null;
-
-    // Functions for wide nav popup
-    function hidePopup() {
-        widePopup.style.display = "none";
-        popupButtons.forEach(button => button.style.transform = "rotate(90deg)");
-    }
-
-    function showPopup() {
-        cancelCloseTimer();
-        widePopup.style.display = "flex";
-    }
-
-    function startCloseTimer() {
-        cancelCloseTimer();
-        closeTimer = setTimeout(() => {
-            hidePopup();
-            closeTimer = null;
-        }, MENU_CLOSE_DELAY);
-    }
-
-    function cancelCloseTimer() {
-        if (closeTimer) {
-            clearTimeout(closeTimer);
-        }
-        closeTimer = null;
-    }
-
-    // Delay when the popup closes
-    wideNavLinks.addEventListener("mouseenter", cancelCloseTimer);
-    wideNavLinks.addEventListener("mouseleave", startCloseTimer);
-
-    widePopup.addEventListener("mouseenter", cancelCloseTimer);
-    widePopup.addEventListener("mouseleave", startCloseTimer);
-
-    // Functions for toggle arrows next to category links
-    function startToggleTimer() {
-        cancelToggleTimer();
-        canToggle = false;
-        toggleTimer = setTimeout(() => {
-            canToggle = true;
-        }, 1)
-    }
-
-    function cancelToggleTimer() {
-        if (toggleTimer) {
-            clearTimeout(toggleTimer);
-        }
-        toggleTimer = null;
-        canToggle = true;
-    }
-
-    // Loads collection into wide nav popup
-    function loadCollection(collection) {
-        const collectionContainer = document.getElementById(`containerFor${collection}`);
-
-        if (collectionContainer) {
-            // Hide all other collection containers
-            for (const container of allContainers) {
-                if (container !== collectionContainer) {
-                    container.style.display = "none";
-                }
-            }
-
-            // Show the relevant collection container
-            collectionContainer.style.display = "flex";
-
-            currentCollection = collection;
-
-            popupButtons.forEach(button => {
-                const buttonCollection = button.id.replace(/^buttonFor/, "");
-
-                if (buttonCollection === collection) {
-                    button.style.transform = "rotate(180deg)";
-                } else {
-                    button.style.transform = "rotate(90deg)";
-                }
-            });
-        }
-    }
-
-    // Open nav menu on mouse hover or touchpad tap
-    wideNavLinks.querySelectorAll("li").forEach(link => {
-        link.addEventListener("mouseenter", (event) => {
-            const span = event.target.querySelectorAll("span")[0]
-
-            if (span && wideNavLinks.contains(span)) {
-                showPopup();
-
-                const collection = span.id.replace(/^linkTo/, "");
-                loadCollection(collection);
-                startToggleTimer();
-            }
-            });
-    })
-
-    // Toggle menu when arrows are clicked. canToggle prevents this from double-triggering with "mouseenter" for mobile users
-    popupButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            const collection = button.id.replace(/^buttonFor/, "");
-
-            if ((currentCollection === collection) & canToggle) {
-                hidePopup();
-                currentCollection = null;
-                cancelToggleTimer();
-                return;
-            }
-
-            loadCollection(collection);
-            showPopup();
-            cancelToggleTimer();
-        });
-    });
-
-    // Close poppup if the user clicks/taps anywhere else on the page
-    document.body.addEventListener("click", (event) => {
-        if (!wideNavLinks.contains(event.target) && !widePopup.contains(event.target)) {
-            hidePopup();
-        }
-    });
-
-
-    // Hide nav bar when scrolling up
-    const outerContainer = document.getElementById("outerNavContainer");
-
-    let lastY = window.scrollY;
-    let hidden = false;
-
-    window.addEventListener("scroll", () => {
-        const currentY = window.scrollY;
-
-        if (currentY > lastY && !hidden) { // Scrolling down
-            outerContainer.style.transform = "translateY(-100%)";
-            hidePopup()
-            hidden = true;
-
-        } else if (currentY < lastY && hidden) { // Scrolling up
-            outerContainer.style.transform = "translateY(0)";
-            hidden = false;
-        }
-
-        lastY = currentY;
-    });
-
+<script>
+    import initMainNav from "./main-nav-menu";
+    initMainNav();
 </script>
 
 <style lang="scss">
@@ -364,7 +210,7 @@ const byCollection = articles.reduce((accumulator, article) => {
 
     $nav-height: 3rem;
     $arrow-size: .6rem;
-    $icon-size: 1.5rem;
+    $icon-size: 1.25rem;
     $nav-bar-background: #fefcfc;
     $nav-bar-border: rgb(193, 193, 193);
     $link-underline: #3e3e3e;
@@ -623,7 +469,7 @@ const byCollection = articles.reduce((accumulator, article) => {
                 margin-bottom: .5rem;
             }
 
-            /* Browser supports interpolate-size */
+            /* Ensure that browser supports interpolate-size */
             @supports (interpolate-size: allow-keywords) {
                 details {
                     interpolate-size: allow-keywords; /* Required to animate block-size: auto */
@@ -661,6 +507,7 @@ const byCollection = articles.reduce((accumulator, article) => {
                     cursor: pointer;
 
                     /* Replace default arrow with custom arrow and animate open/close */
+
                     /* Closed state */
                     &::before {
                         content: "";

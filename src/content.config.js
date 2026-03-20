@@ -9,7 +9,7 @@ import { glob } from 'astro/loaders';
 // 3. Import Zod
 import { z } from 'astro/zod';
 
-import { COLLECTION_LIST } from "@/constants/collectionList"
+import { COLLECTION_LIST } from "@/globals/collectionList"
 
 // 4. Define your collection
 const articles = defineCollection({
