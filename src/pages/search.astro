@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import * as G from "@/components/general";
+---
+
+<BaseLayout pageTitle={"Search All Articles"}>
+	<main class="homeContainer">
+		<h1>Search Page</h1>
+
+        <div>
+            <div>
+                <label for="searchPageInput">Search all articles</label>
+                <input type="search" required minlength="2" name="search" id="searchPageInput" placeholder="Search...">
+                <p id="searchName"></p>
+            </div>
+
+            <section aria-label="Search Results">
+                <ul id="searchResults">
+                </ul>
+            </section>
+        </div>
+    </main>
+</BaseLayout>
+
+<script>
+    import Search from "@/scripts/search"
+
+    Search();
+</script>
+
+<style lang="scss">
+	@use "/src/styles/index" as *;
+
+	.homeContainer {
+		@include flex-center;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+</style>

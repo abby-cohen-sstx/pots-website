@@ -14,6 +14,16 @@ const { fullscreen } = Astro.props as Props;
 4. Implement in index.astro
 5. Connect search icons to open search bar
 6. Consider animations and final polish
+
+
+Plan:
+- On sufficiently wide screens, display a whole search bar in the wide nav bar. Redirect to search page on submit
+- On smaller screens, display a search icon in the wide nav menu which redirects to the search page on click
+- Mobile users can either click the search icon in the narrow nav bar or use the full search bar in the narrow popup
+
+- Restart search bar design from scratch for now, but I can add in a lot of this preexisting code later once I get to the styling stage
+- Search bars in menus shouldn't display results while typing, but search bar in dedicated search page ideally should
+
 */
 ---
 

@@ -1,0 +1,36 @@
+
+<form class="form" id="searchWidgetForm">
+    <input type="search" required minlength="2" name="search" id="searchWidgetInput" placeholder="Search...">
+</form>
+
+
+<script>
+    import * as u from "@/globals/utilities";
+    import DOMPurify from "dompurify";
+
+    const form = u.getByID("searchWidgetForm", HTMLFormElement);
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const searchTerm = DOMPurify.sanitize(formData.get("search")?.toString().trim() || "");
+        
+        if(!searchTerm || searchTerm.length === 0) {
+            return;
+        }
+
+        const url = new URL("/search", window.location.origin); // add the search path to the current origin
+        url.searchParams.set("s", searchTerm);
+        window.location.assign(url.toString()); // using assign instead of replace to maintain history
+    });
+</script>
+
+<style lang="scss">
+    @use "/src/styles/index" as *;
+
+    input {
+        font: inherit;
+    }
+
+</style>
