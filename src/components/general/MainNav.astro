@@ -1,6 +1,6 @@
 ---
 import NavHome from "./NavHome.astro"
-import SearchBar from "./SearchBar.astro"
+import SearchWidget from "./SearchWidget.astro"
 
 import Arrow from "@/images/NavArrow.svg"
 import OpenMenuIcon from "@/images/OpenMenuIcon.svg"
@@ -14,6 +14,7 @@ const ARTICLES_DISPLAY_LIMIT = 4;
 import { getCollection } from "astro:content";
 import { ARTICLE_ORDER } from "@/globals/articleOrder";
 import { COLLECTION_LIST } from "@/globals/collectionList"
+
 
 const articles = await getCollection("articles");
 
@@ -156,7 +157,7 @@ const byCollection = articles.reduce((accumulator, article) => {
         </li>
     </ul>
 
-    <SearchBar fullscreen="hide" />
+    <SearchWidget />
 
     <menu>
         <h1>Categories</h1>

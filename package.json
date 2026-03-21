@@ -9,10 +9,12 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.8",
     "@astrojs/mdx": "^5.0.1",
     "astro": "^6.0.5",
     "dompurify": "^3.3.3",
-    "fuse.js": "^7.1.0"
+    "fuse.js": "^7.1.0",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@types/dompurify": "^3.0.5",

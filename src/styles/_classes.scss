@@ -13,3 +13,78 @@
     background-color: rgb(118, 118, 118);
     margin: 20px 0px;
 }
+
+.search {
+    $icon-size: 1rem;
+    $height-buffer: .5rem;
+    $default-width: 300px;
+    $icon-padding: .4rem;
+    $search-height: calc($icon-size + ($icon-padding * 2) + $height-buffer);
+    $icon-top-pos: calc(($search-height - $icon-size) / 2);
+    $icon-horizontal-pos: calc($icon-padding + $height-buffer);
+
+/* Put search icon "below" input and make cursor consistent */
+/* Customize clear button */
+
+    .wrapper {
+        position: relative;
+        min-width: $default-width;
+        height: $search-height;
+
+        &:hover {
+            .searchIcon {
+                transform: scale(1.07)
+            }
+        }
+    }
+
+    svg {
+        position: absolute;
+        width: $icon-size;
+        height: $icon-size;
+        top: $icon-top-pos;        
+
+        transition: transform .3s;
+    }
+
+    .searchIcon {
+        pointer-events: none;
+        left: $icon-horizontal-pos;
+    }
+
+    .clearIcon {
+        right: $icon-horizontal-pos;
+        cursor: pointer;
+
+        &:hover {
+            transform: scale(1.07);
+        }
+    }
+
+    .input {
+        border: 1px solid grey;
+        border-radius: calc($search-height / 2);
+        height: 100%;
+        width: 100%;
+        padding-left: $search-height;
+        font-family: inherit;
+
+        &::-webkit-search-cancel-button {
+            -webkit-appearance: none;
+        }
+    }
+
+    .widget {
+        margin: 0;
+    }
+
+    .fullPage {
+        .box {
+            margin: 0;
+        }
+
+        .results {
+            margin: 0;
+        }
+    }
+}

@@ -1,20 +1,30 @@
+---
+import SearchIcon from "@/images/SearchIcon.svg"
+import ClearIcon from "@/images/CloseIcon.svg"
+---
 
-<form class="form" id="searchWidgetForm">
-    <input type="search" required minlength="2" name="search" id="searchWidgetInput" placeholder="Search...">
-</form>
+<div class="search">
+    <form class="widget wrapper" id="searchWidgetForm">
+        <SearchIcon class="searchIcon" />
+        <input type="search" name="search" id="searchWidgetInput" class="input" placeholder="Search...">
+        <ClearIcon class="clearIcon" id="searchWidgetClearIcon" />
+    </form>
+</div>
 
 
 <script>
     import * as u from "@/globals/utilities";
-    import DOMPurify from "dompurify";
 
     const form = u.getByID("searchWidgetForm", HTMLFormElement);
+    const clearButton = u.getByID("searchWidgetClearIcon", SVGElement);
+    const input = u.getByID("searchWidgetInput", HTMLInputElement);
 
+    // Go to search.astro
     form.addEventListener("submit", (event) => {
         event.preventDefault();
 
         const formData = new FormData(form);
-        const searchTerm = DOMPurify.sanitize(formData.get("search")?.toString().trim() || "");
+        const searchTerm = u.validateSearch(formData.get("search")?.toString().trim() || "");
         
         if(!searchTerm || searchTerm.length === 0) {
             return;
@@ -24,13 +34,15 @@
         url.searchParams.set("s", searchTerm);
         window.location.assign(url.toString()); // using assign instead of replace to maintain history
     });
+
+    // Clear button
+    clearButton.addEventListener("click", () => {
+        input.value = "";
+    });
+
 </script>
 
 <style lang="scss">
     @use "/src/styles/index" as *;
 
-    input {
-        font: inherit;
-    }
-
-</style>
+</style> 

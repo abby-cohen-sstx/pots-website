@@ -1,23 +1,32 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import * as G from "@/components/general";
+import SearchIcon from "@/images/SearchIcon.svg"
+import ClearIcon from "@/images/CloseIcon.svg"
+
+
 ---
 
 <BaseLayout pageTitle={"Search All Articles"}>
 	<main class="homeContainer">
-		<h1>Search Page</h1>
+		<h1>Search</h1>
 
-        <div>
-            <div>
-                <label for="searchPageInput">Search all articles</label>
-                <input type="search" required minlength="2" name="search" id="searchPageInput" placeholder="Search...">
-                <p id="searchName"></p>
+        <div class="search">
+            <div class="fullPage">
+                <div class="box">
+                    <label for="searchPageInput">Search all articles</label>
+                    <div class="wrapper">
+                        <SearchIcon class="searchIcon" />
+                        <input type="search" name="search" id="searchPageInput" class="input" placeholder="Search...">
+                        <ClearIcon class="clearIcon" id="searchPageClearIcon" />
+                    </div>
+                    <p id="searchName"></p>
+                </div>
+
+                <section aria-label="Search Results" class="results">
+                    <ul id="searchResults">
+                    </ul>
+                </section>
             </div>
-
-            <section aria-label="Search Results">
-                <ul id="searchResults">
-                </ul>
-            </section>
         </div>
     </main>
 </BaseLayout>

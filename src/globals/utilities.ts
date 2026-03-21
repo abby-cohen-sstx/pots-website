@@ -39,3 +39,8 @@ export function getAllByQuery<T extends Element>(
     });
     return result;
 }
+
+// Remove all characters except a-z, 0-9, and whitespaces
+export function validateSearch(searchTerm: string) {
+    return searchTerm.replace(/[^a-z0-9\s]/gi, '');
+}
