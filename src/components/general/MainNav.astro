@@ -83,8 +83,13 @@ const byCollection = articles.reduce((accumulator, article) => {
                 <div class="svgContainer settingsContainer">
                     <SettingsIcon />
                 </div>
-                <div class="svgContainer searchContainer">
-                    <SearchIcon />
+                <div class="searchOuterContainer">
+                    <div class="svgContainer searchIconContainer">
+                        <SearchIcon />
+                    </div>
+                    <div class="searchBarContainer">
+                        <SearchWidget />
+                    </div>
                 </div>
             </li>
         </ul>
@@ -129,7 +134,7 @@ const byCollection = articles.reduce((accumulator, article) => {
                 <NavHome />
             </li>
             
-            <li class="svgContainer searchContainer">
+            <li class="svgContainer searchIconContainer">
                 <SearchIcon id="searchIcon" />
             </li>
         </ul>
@@ -211,6 +216,8 @@ const byCollection = articles.reduce((accumulator, article) => {
     $nav-bar-border: rgb(193, 193, 193);
     $link-underline: #3e3e3e;
 
+    $search-breakpoint: 65rem;
+
     svg {
         width: $icon-size;
         height: $icon-size;
@@ -226,8 +233,9 @@ const byCollection = articles.reduce((accumulator, article) => {
         }
     }
 
-    .searchContainer {
+    .searchIconContainer {
         transition: transform .15s ease-in-out;
+        display: none;
 
         &:hover {
             transform: rotate(15deg);
@@ -396,12 +404,12 @@ const byCollection = articles.reduce((accumulator, article) => {
         }
     }
 
-
     /* Switch between narrow and wide */
     @media only screen and (max-width: $breakpoint) {
         .wideNav {
             display: none;
         }
+        
         .narrowNav {
             display: flex;
         }
@@ -411,8 +419,30 @@ const byCollection = articles.reduce((accumulator, article) => {
         .wideNav {
             display: flex;
         }
+
         .narrowNav {
             display: none;
+        }
+    }
+
+    /* Toggle search bar or search icon based on screen width */
+    @media only screen and (max-width: $search-breakpoint) {
+        .searchIconContainer {
+            display: block;
+        }
+
+        .searchBarContainer {
+            display: none;
+        }
+    }
+
+    @media only screen and (min-width: $search-breakpoint) {
+        .searchIconContainer {
+            display: none;
+        }
+
+        .searchBarContainer {
+            display: block;
         }
     }
 
