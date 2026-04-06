@@ -7,26 +7,24 @@ import ClearIcon from "@/images/CloseIcon.svg"
 ---
 
 <BaseLayout pageTitle={"Search All Articles"}>
-	<main class="homeContainer">
+	<main class="mainContainer">
 		<h1>Search</h1>
 
         <div class="search">
-            <div class="fullPage">
-                <div class="box">
-                    <label for="searchPageInput">Search all articles</label>
-                    <div class="wrapper">
-                        <SearchIcon class="searchIcon" />
-                        <input type="search" name="search" id="searchPageInput" class="input" placeholder="Search...">
-                        <ClearIcon class="clearIcon" id="searchPageClearIcon" />
-                    </div>
-                    <p id="searchName"></p>
+            <div class="box">
+                <label for="searchPageInput">Search all articles</label>
+                <div class="wrapper">
+                    <SearchIcon class="searchIcon" />
+                    <input type="search" name="search" id="searchPageInput" class="input" placeholder="Search...">
+                    <ClearIcon class="clearIcon" id="searchPageClearIcon" />
                 </div>
-
-                <section aria-label="Search Results" class="results">
-                    <ul id="searchResults">
-                    </ul>
-                </section>
+                <p id="searchName"></p>
             </div>
+
+            <section aria-label="Search Results">
+                <ul id="searchResults" class="resultsList">
+                </ul>
+            </section>
         </div>
     </main>
 </BaseLayout>
@@ -40,10 +38,12 @@ import ClearIcon from "@/images/CloseIcon.svg"
 <style lang="scss">
 	@use "/src/styles/index" as *;
 
-	.homeContainer {
+	.mainContainer {
 		@include flex-center;
 		flex-direction: column;
 		gap: 20px;
 	}
+
+    /* Must use global classes to style search results */
 
 </style>

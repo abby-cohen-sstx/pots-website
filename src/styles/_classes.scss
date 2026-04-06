@@ -23,9 +23,6 @@
     $icon-top-pos: calc(($search-height - $icon-size) / 2);
     $icon-horizontal-pos: calc($icon-padding + $height-buffer);
 
-/* Put search icon "below" input and make cursor consistent */
-/* Customize clear button */
-
     .wrapper {
         position: relative;
         min-width: $default-width;
@@ -78,13 +75,20 @@
         margin: 0;
     }
 
-    .fullPage {
-        .box {
-            margin: 0;
-        }
+    .resultsList {
+        li {
+            margin: .5rem 0;
+            
+            a {
+                text-decoration: none;
+                color: black;
+                font-size: 1.1rem;
 
-        .results {
-            margin: 0;
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
         }
     }
+
 }

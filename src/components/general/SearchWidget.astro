@@ -4,10 +4,10 @@ import ClearIcon from "@/images/CloseIcon.svg"
 ---
 
 <div class="search">
-    <form class="widget wrapper" id="searchWidgetForm">
+    <form class="widget wrapper searchWidgetForm">
         <SearchIcon class="searchIcon" />
-        <input type="search" name="search" id="searchWidgetInput" class="input" placeholder="Search...">
-        <ClearIcon class="clearIcon" id="searchWidgetClearIcon" />
+        <input type="search" name="search" class="input" placeholder="Search...">
+        <ClearIcon class="clearIcon" />
     </form>
 </div>
 
@@ -15,31 +15,33 @@ import ClearIcon from "@/images/CloseIcon.svg"
 <script>
     import * as u from "@/globals/utilities";
 
-    const form = u.getByID("searchWidgetForm", HTMLFormElement);
-    const clearButton = u.getByID("searchWidgetClearIcon", SVGElement);
-    const input = u.getByID("searchWidgetInput", HTMLInputElement);
+    const forms = u.getAllByQuery(".searchWidgetForm", HTMLFormElement);
 
-    // Go to search.astro
-    form.addEventListener("submit", (event) => {
-        event.preventDefault();
+    forms.forEach(form => {
+        const input = u.getByQuery(".input", HTMLInputElement, form);
+        const clearButton = u.getByQuery(".clearIcon", SVGElement, form);
 
-        const formData = new FormData(form);
-        const searchTerm = u.validateSearch(formData.get("search")?.toString().trim() || "");
-        
-        if(!searchTerm || searchTerm.length === 0) {
-            return;
-        }
+        // Go to search.astro
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
 
-        const url = new URL("/search", window.location.origin); // add the search path to the current origin
-        url.searchParams.set("s", searchTerm);
-        window.location.assign(url.toString()); // using assign instead of replace to maintain history
+            const formData = new FormData(form);
+            const searchTerm = u.validateSearch(formData.get("search")?.toString().trim() || "");
+            
+            if(!searchTerm || searchTerm.length === 0) {
+                return;
+            }
+
+            const url = new URL("/search", window.location.origin); // add the search path to the current origin
+            url.searchParams.set("s", searchTerm);
+            window.location.assign(url.toString()); // using assign instead of replace to maintain history
+        });
+
+        // Clear button
+        clearButton.addEventListener("click", () => {
+            input.value = "";
+        });
     });
-
-    // Clear button
-    clearButton.addEventListener("click", () => {
-        input.value = "";
-    });
-
 </script>
 
 <style lang="scss">

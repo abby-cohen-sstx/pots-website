@@ -6,7 +6,7 @@ async function getArticles() {
     return articles.map(article => ({
         title: article.data.title,
         subheader: article.data.subheader,
-        date: article.data.pubDate
+        id: article.id,
     }));
 }
 

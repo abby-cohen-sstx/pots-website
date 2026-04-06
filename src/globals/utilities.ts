@@ -15,9 +15,10 @@ export function getByID<T extends Element>(
 // Gets element by query selector
 export function getByQuery<T extends Element>(
     query: string,
-    myClass: ClassOf<T>
+    myClass: ClassOf<T>,
+    parent: Element | Document = document
 ): T {
-    const element = document.querySelector(query) as Element | null;
+    const element = parent.querySelector(query) as Element | null;
     if(!(element instanceof myClass)) {
         throw new Error(`getByQuery Failed. Query: ${query}`);
     }
@@ -27,9 +28,10 @@ export function getByQuery<T extends Element>(
 // Gets all elements matching query selector
 export function getAllByQuery<T extends Element>(
     query: string,
-    myClass: ClassOf<T>
+    myClass: ClassOf<T>,
+    parent: Element | Document = document
 ): T[] {
-    const elements = document.querySelectorAll(query) as NodeListOf<Element>;
+    const elements = parent.querySelectorAll(query) as NodeListOf<Element>;
     const result: T[] = [];
     elements.forEach(element => {
         if(!(element instanceof myClass)) {

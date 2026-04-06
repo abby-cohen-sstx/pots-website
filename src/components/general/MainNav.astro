@@ -1,19 +1,20 @@
 ---
-import NavHome from "./NavHome.astro"
-import SearchWidget from "./SearchWidget.astro"
+import NavHome from "./NavHome.astro";
+import SearchWidget from "./SearchWidget.astro";
+import SearchIconWidget from "./SearchIconWidget.astro";
 
-import Arrow from "@/images/NavArrow.svg"
-import OpenMenuIcon from "@/images/OpenMenuIcon.svg"
-import CloseMenuIcon from "@/images/CloseMenuIcon.svg"
-import SearchIcon from "@/images/SearchIcon.svg"
-import SettingsIcon from "@/images/SettingsIcon.svg"
+import Arrow from "@/images/NavArrow.svg";
+import OpenMenuIcon from "@/images/OpenMenuIcon.svg";
+import CloseMenuIcon from "@/images/CloseMenuIcon.svg";
+import SearchIcon from "@/images/SearchIcon.svg";
+import SettingsIcon from "@/images/SettingsIcon.svg";
 
 const ARTICLES_DISPLAY_LIMIT = 4;
 
 // Load all articles
 import { getCollection } from "astro:content";
 import { ARTICLE_ORDER } from "@/globals/articleOrder";
-import { COLLECTION_LIST } from "@/globals/collectionList"
+import { COLLECTION_LIST } from "@/globals/collectionList";
 
 
 const articles = await getCollection("articles");
@@ -85,7 +86,7 @@ const byCollection = articles.reduce((accumulator, article) => {
                 </div>
                 <div class="searchOuterContainer">
                     <div class="svgContainer searchIconContainer">
-                        <SearchIcon />
+                        <SearchIconWidget />
                     </div>
                     <div class="searchBarContainer">
                         <SearchWidget />
@@ -135,7 +136,7 @@ const byCollection = articles.reduce((accumulator, article) => {
             </li>
             
             <li class="svgContainer searchIconContainer">
-                <SearchIcon id="searchIcon" />
+                <SearchIconWidget />
             </li>
         </ul>
     </div>
@@ -211,7 +212,6 @@ const byCollection = articles.reduce((accumulator, article) => {
 
     $nav-height: 3rem;
     $arrow-size: .6rem;
-    $icon-size: 1.25rem;
     $nav-bar-background: #fefcfc;
     $nav-bar-border: rgb(193, 193, 193);
     $link-underline: #3e3e3e;
@@ -219,14 +219,14 @@ const byCollection = articles.reduce((accumulator, article) => {
     $search-breakpoint: 65rem;
 
     svg {
-        width: $icon-size;
-        height: $icon-size;
+        width: $nav-icon-size;
+        height: $nav-icon-size;
     }
 
     .svgContainer {
         display: block;
-        width: $icon-size;
-        height: $icon-size;
+        width: $nav-icon-size;
+        height: $nav-icon-size;
 
         &:hover {
             cursor:pointer;

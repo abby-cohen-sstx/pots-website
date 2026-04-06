@@ -30,10 +30,6 @@ export default function Search() {
                 name: "subheader",
                 weight: .2,
             },
-            {
-                name: "date",
-                weight: .2,
-            }
         ],
 
     }
@@ -84,7 +80,7 @@ export default function Search() {
         }
 
         const searchResult = FUSE_INSTANCE.search(search);
-        // console.log(searchResult)
+        console.log(searchResult)
         
         resultsList.innerHTML = searchResult.length > 0
             ? displaySearchResults(searchResult)
@@ -95,7 +91,7 @@ export default function Search() {
         item: {
             title: string,
             subheader: string,
-            date: Date,
+            id: string,
         },
         matches: Array<{
             indicies: Array<[Number, Number]>, // [startChar, endChar]
@@ -108,9 +104,10 @@ export default function Search() {
 
     function displaySearchResults(results: Array<fuseSearchResult>) {
         return results.map((result) => {
-            const {title, subheader, date } = result.item;
-            const dateAsDate = new Date(date);
-            return `<li class="test"> ${title} </li>`
+            const {title, subheader, id } = result.item;
+            const url = new URL(`/articles/${id}`, window.location.origin);
+
+            return `<li class="test"> <a href=${url}> ${title} </a></li>`
         }).join("");
     }
 
@@ -140,7 +137,6 @@ export default function Search() {
         updateSearch(searchTerm);
     })
 
-    console.log(clearButton)
     clearButton.addEventListener("click", () => {
         console.log("click");
         input.value = "";

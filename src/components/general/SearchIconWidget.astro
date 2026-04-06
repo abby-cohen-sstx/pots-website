@@ -1,0 +1,28 @@
+---
+import SearchIcon from "@/images/SearchIcon.svg"
+---
+
+<SearchIcon class="search-icon-widget" />
+
+<script>
+    import * as u from "@/globals/utilities";
+    const searchIcons = u.getAllByQuery(".search-icon-widget", SVGElement);
+
+
+    searchIcons.forEach(icon => {
+        icon.addEventListener("click", () => {
+            const url = new URL("/search", window.location.origin);
+            window.location.assign(url.toString());
+        });
+    });
+</script>
+
+<style lang="scss">
+    @use "/src/styles/index" as *;
+
+    svg {
+        width: $nav-icon-size;
+        height: $nav-icon-size;
+        cursor: pointer;
+    }
+</style>
