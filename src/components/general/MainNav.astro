@@ -1,4 +1,6 @@
 ---
+import * as u from '@/globals/utilities';
+
 import NavHome from "./NavHome.astro";
 import SearchWidget from "./SearchWidget.astro";
 import SearchIconWidget from "./SearchIconWidget.astro";
@@ -17,45 +19,7 @@ import { ARTICLE_ORDER } from "@/globals/articleOrder";
 import { COLLECTION_LIST } from "@/globals/collectionList";
 
 
-const articles = await getCollection("articles");
-
-// Lookup table: id (article name) -> position in ARTICLE_ORDER
-const orderIndex = new Map<string, number>();
-ARTICLE_ORDER.forEach((id, index) => orderIndex.set(id, index));
-
-// Sort all articles
-articles.sort((a, b) => {
-  const ai = orderIndex.get(a.id);
-  const bi = orderIndex.get(b.id);
-
-  // Both explicitly ordered:
-  if (ai !== undefined && bi !== undefined) return ai - bi;
-
-  // Priortize explicitly ordered articles over non-explicitly ordered:
-  if (ai !== undefined) return -1;
-  if (bi !== undefined) return 1;
-
-  // Neither ordered:
-  return 0;
-});
-
-// Group by collection
-const byCollection = articles.reduce((accumulator, article) => {
-    const collection = article.data.collection;
-    const type = article.data.type;
-
-    // Intiialize collection if it doesn't exist:
-    accumulator[collection] = accumulator[collection] || {};
-
-    // Initialize type array if it doesn't exist:
-    accumulator[collection][type] = accumulator[collection][type] || [];
-
-    // Push article into the correct collection and type group
-    accumulator[collection][type].push(article);
-
-    return accumulator;
-}, /** @type {Record<string, typeof articles>} */ ({})); // {collection1: [{article1},{article2}], collection2: [...], ...}
-
+const byCollection = await u.getArticleListByCollectionAndType();
 ---
 
 <nav id="outerNavContainer">

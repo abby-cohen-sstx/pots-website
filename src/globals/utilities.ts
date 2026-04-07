@@ -46,3 +46,78 @@ export function getAllByQuery<T extends Element>(
 export function validateSearch(searchTerm: string) {
     return searchTerm.replace(/[^a-z0-9\s]/gi, '');
 }
+
+import { getCollection } from "astro:content";
+import { ARTICLE_ORDER } from "@/globals/articleOrder";
+import { COLLECTION_LIST } from "@/globals/collectionList";
+
+export async function sortArticles() {
+    const articles = await getCollection("articles");
+
+    /*
+    Format:
+    [{
+        id: 'support-groups',
+        data: {
+        layout: '/src/layouts/MarkdownLayout.astro',
+        title: 'Support Groups for POTS',
+        header: 'Support Groups for POTS',
+        subheader: 'My subtitle',
+        pubDate: 2022-07-01T00:00:00.000Z,
+        collection: 'Resources',
+        type: 'Resources'
+        },
+        filePath: 'src/pages/articles/support-groups.mdx',
+        digest: '8cebcce5919bc1a0',
+        deferredRender: true,
+        collection: 'articles'
+        body: `text content of the article`
+    }]
+    */
+
+    // Create a lookup table: id -> position in ARTICLE_ORDER
+    const orderIndex = new Map<string, number>();
+    ARTICLE_ORDER.forEach((id, index) => orderIndex.set(id, index));
+
+    // Sort all articles according to orderIndex
+    articles.sort((a, b) => {
+    const ai = orderIndex.get(a.id);
+    const bi = orderIndex.get(b.id);
+
+    // Both explicitly ordered:
+    if (ai !== undefined && bi !== undefined) return ai - bi;
+
+    // Priortize explicitly ordered articles over non-explicitly ordered:
+    if (ai !== undefined) return -1;
+    if (bi !== undefined) return 1;
+
+    // Neither ordered:
+    return 0;
+    });
+
+    return articles;
+}
+
+export async function getArticleListByCollectionAndType() {
+    const articles = await sortArticles();
+    // Group by collection
+    const byCollection = articles.reduce((accumulator, article) => {
+        const collection = article.data.collection;
+        const type = article.data.type;
+
+        // Intiialize collection if it doesn't exist:
+        accumulator[collection] = accumulator[collection] || {};
+
+        // Initialize type array if it doesn't exist:
+        accumulator[collection][type] = accumulator[collection][type] || [];
+
+        // Push article into the correct collection and type group
+        accumulator[collection][type].push(article);
+
+        return accumulator;
+    }, {} as Record<string, Record<string, typeof articles>>);
+
+    console.log("-------------");
+    console.log(byCollection);
+    return byCollection;
+}

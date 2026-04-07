@@ -4,6 +4,11 @@ import "@/styles/_classes.scss";
 import * as G from '@/components/general';
 
 const { pageTitle } = Astro.props;
+
+import * as u from '@/globals/utilities';
+u.getArticleListByCollectionAndType();
+
+
 ---
 
 <!doctype html>
@@ -17,7 +22,9 @@ const { pageTitle } = Astro.props;
   </head>
 
   <body>
+    <!-- 
     <G.MainNav />
+    -->
     <div class="baseContainer">
       <div>
         <slot />

@@ -3,6 +3,8 @@ import { getCollection } from "astro:content";
 import { ARTICLE_ORDER } from "@/globals/articleOrder";
 import { COLLECTION_LIST } from "@/globals/collectionList"
 
+import * as u from '@/globals/utilities';
+
 export async function getStaticPaths() {
   return COLLECTION_LIST.map((collection) => ({
     params: { collection: collection.toLowerCase() },
@@ -12,27 +14,7 @@ export async function getStaticPaths() {
 
 const { collectionEnum } = Astro.props; // Display name of current collection
 
-const articles = await getCollection("articles", ({ data }) => data.collection === collectionEnum);
-
-// Lookup table: id (article name) -> position in ARTICLE_ORDER
-const orderIndex = new Map<string, number>();
-ARTICLE_ORDER.forEach((id, index) => orderIndex.set(id, index));
-
-// Sort by custom order defined by ARTICLE_ORDER
-articles.sort((a, b) => {
-  const ai = orderIndex.get(a.id);
-  const bi = orderIndex.get(b.id);
-
-  // Both explicitly ordered:
-  if (ai !== undefined && bi !== undefined) return ai - bi;
-
-  // Priortize explicitly ordered articles over non-explicitly ordered:
-  if (ai !== undefined) return -1;
-  if (bi !== undefined) return 1;
-
-  // Neither ordered:
-  return 0;
-});
+const articles = await u.sortArticles();
 
 ---
 
