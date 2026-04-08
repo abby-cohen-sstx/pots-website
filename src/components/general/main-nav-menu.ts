@@ -1,4 +1,4 @@
-import * as u from "@/globals/utilities";
+import * as u from "@/globals/browserUtilities";
 
 export default function initMainNav() {
     const outerContainer = u.getByID("outerNavContainer", HTMLElement); // Contains the entire nav (except narrowPopup)

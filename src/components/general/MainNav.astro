@@ -1,5 +1,5 @@
 ---
-import * as u from '@/globals/utilities';
+import * as u from '@/globals/serverUtilities';
 
 import NavHome from "./NavHome.astro";
 import SearchWidget from "./SearchWidget.astro";
@@ -8,18 +8,14 @@ import SearchIconWidget from "./SearchIconWidget.astro";
 import Arrow from "@/images/NavArrow.svg";
 import OpenMenuIcon from "@/images/OpenMenuIcon.svg";
 import CloseMenuIcon from "@/images/CloseMenuIcon.svg";
-import SearchIcon from "@/images/SearchIcon.svg";
 import SettingsIcon from "@/images/SettingsIcon.svg";
 
 const ARTICLES_DISPLAY_LIMIT = 4;
 
 // Load all articles
-import { getCollection } from "astro:content";
-import { ARTICLE_ORDER } from "@/globals/articleOrder";
 import { COLLECTION_LIST } from "@/globals/collectionList";
 
-
-const byCollection = await u.getArticleListByCollectionAndType();
+const byCollection = await u.articlesByCollectionAndType();
 ---
 
 <nav id="outerNavContainer">

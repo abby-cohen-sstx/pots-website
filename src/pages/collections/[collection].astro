@@ -3,7 +3,7 @@ import { getCollection } from "astro:content";
 import { ARTICLE_ORDER } from "@/globals/articleOrder";
 import { COLLECTION_LIST } from "@/globals/collectionList"
 
-import * as u from '@/globals/utilities';
+import * as u from '@/globals/serverUtilities';
 
 export async function getStaticPaths() {
   return COLLECTION_LIST.map((collection) => ({

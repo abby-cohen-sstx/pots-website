@@ -1,4 +1,4 @@
-import * as u from "@/globals/utilities";
+import * as u from "@/globals/browserUtilities";
 import Fuse from 'fuse.js';
 // https://www.fusejs.io/
 
@@ -80,7 +80,7 @@ export default function Search() {
         }
 
         const searchResult = FUSE_INSTANCE.search(search);
-        console.log(searchResult)
+        // console.log(searchResult)
         
         resultsList.innerHTML = searchResult.length > 0
             ? displaySearchResults(searchResult)

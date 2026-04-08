@@ -5,10 +5,6 @@ import * as G from '@/components/general';
 
 const { pageTitle } = Astro.props;
 
-import * as u from '@/globals/utilities';
-u.getArticleListByCollectionAndType();
-
-
 ---
 
 <!doctype html>
@@ -22,9 +18,7 @@ u.getArticleListByCollectionAndType();
   </head>
 
   <body>
-    <!-- 
     <G.MainNav />
-    -->
     <div class="baseContainer">
       <div>
         <slot />

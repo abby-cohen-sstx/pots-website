@@ -1,57 +1,8 @@
-export type ClassOf<T> = { new (...args: any[]): T }; // javascript is so weird... this syntax is disgusting lol
-
-// Gets element by ID and checks that it is of the expected type
-export function getByID<T extends Element>(
-    id: string,
-    myClass: ClassOf<T>
-): T {
-    const element = document.getElementById(id) as Element | null;
-    if(!(element instanceof myClass)) {
-        throw new Error(`getByID Failed. Element ID: ${id}`);
-    }
-    return element as T;
-}
-
-// Gets element by query selector
-export function getByQuery<T extends Element>(
-    query: string,
-    myClass: ClassOf<T>,
-    parent: Element | Document = document
-): T {
-    const element = parent.querySelector(query) as Element | null;
-    if(!(element instanceof myClass)) {
-        throw new Error(`getByQuery Failed. Query: ${query}`);
-    }
-    return element as T;
-}
-
-// Gets all elements matching query selector
-export function getAllByQuery<T extends Element>(
-    query: string,
-    myClass: ClassOf<T>,
-    parent: Element | Document = document
-): T[] {
-    const elements = parent.querySelectorAll(query) as NodeListOf<Element>;
-    const result: T[] = [];
-    elements.forEach(element => {
-        if(!(element instanceof myClass)) {
-            throw new Error(`getAllByQuery Failed. Query: ${query}`);
-        }
-        result.push(element as T);
-    });
-    return result;
-}
-
-// Remove all characters except a-z, 0-9, and whitespaces
-export function validateSearch(searchTerm: string) {
-    return searchTerm.replace(/[^a-z0-9\s]/gi, '');
-}
-
-import { getCollection } from "astro:content";
 import { ARTICLE_ORDER } from "@/globals/articleOrder";
-import { COLLECTION_LIST } from "@/globals/collectionList";
+import { getCollection } from "astro:content";
 
 export async function sortArticles() {
+    
     const articles = await getCollection("articles");
 
     /*
@@ -74,6 +25,7 @@ export async function sortArticles() {
         body: `text content of the article`
     }]
     */
+
 
     // Create a lookup table: id -> position in ARTICLE_ORDER
     const orderIndex = new Map<string, number>();
@@ -98,9 +50,53 @@ export async function sortArticles() {
     return articles;
 }
 
-export async function getArticleListByCollectionAndType() {
-    const articles = await sortArticles();
-    // Group by collection
+export async function filterArticles(collection: string, type: string, sort: boolean = true) {
+    let articles
+
+    if (sort) {
+        articles = await sortArticles();
+    } else {
+        articles = await getCollection("articles");
+    }
+
+    return articles.filter(article => article.data.collection === collection && article.data.type === type);
+}
+
+export async function articlesByType(collection: string, sort: boolean = true) {
+    let articles
+
+    if (sort) {
+        articles = await sortArticles();
+    } else {
+        articles = await getCollection("articles");
+    }
+
+    articles.filter(article => article.data.collection === collection)
+
+    const byType = articles.reduce((accumulator, article) => {
+        const type = article.data.type;
+
+        // Initialize type array if it doesn't exist:
+        accumulator[type] = accumulator[type] || [];
+
+        // Push article into the correct type group
+        accumulator[type].push(article);
+
+        return accumulator;
+    }, {} as Record<string, typeof articles>);
+
+    return byType;
+}
+
+export async function articlesByCollectionAndType(sort: boolean = true) {
+    let articles
+
+    if (sort) {
+        articles = await sortArticles();
+    } else {
+        articles = await getCollection("articles");
+    }
+
     const byCollection = articles.reduce((accumulator, article) => {
         const collection = article.data.collection;
         const type = article.data.type;
@@ -117,7 +113,5 @@ export async function getArticleListByCollectionAndType() {
         return accumulator;
     }, {} as Record<string, Record<string, typeof articles>>);
 
-    console.log("-------------");
-    console.log(byCollection);
     return byCollection;
 }
