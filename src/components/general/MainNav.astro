@@ -15,7 +15,7 @@ const ARTICLES_DISPLAY_LIMIT = 4;
 // Load all articles
 import { COLLECTION_LIST } from "@/globals/collectionList";
 
-const byCollection = await u.articlesByCollectionAndType();
+const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
 ---
 
 <nav id="outerNavContainer">

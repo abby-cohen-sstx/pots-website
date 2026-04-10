@@ -1,4 +1,4 @@
-export type ClassOf<T> = { new (...args: any[]): T }; // javascript is so weird... this syntax is disgusting lol
+export type ClassOf<T> = { new (...args: any[]): T };
 
 // Gets element by ID and checks that it is of the expected type
 export function getByID<T extends Element>(

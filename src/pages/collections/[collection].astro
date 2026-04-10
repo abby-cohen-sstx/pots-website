@@ -1,6 +1,5 @@
 ---
-import { getCollection } from "astro:content";
-import { ARTICLE_ORDER } from "@/globals/articleOrder";
+import BaseLayout from "@/layouts/BaseLayout.astro";
 import { COLLECTION_LIST } from "@/globals/collectionList"
 
 import * as u from '@/globals/serverUtilities';
@@ -8,22 +7,29 @@ import * as u from '@/globals/serverUtilities';
 export async function getStaticPaths() {
   return COLLECTION_LIST.map((collection) => ({
     params: { collection: collection.toLowerCase() },
-    props: { collectionEnum: collection },
+    props: { thisCollection: collection },
   }));
 }
 
-const { collectionEnum } = Astro.props; // Display name of current collection
+const { thisCollection } = Astro.props; // Display name of current collection
 
-const articles = await u.sortArticles();
+const articles = u.articlesByType(thisCollection, await u.sortArticles())
+const types = Object.keys(articles)
 
 ---
+<BaseLayout pageTitle={thisCollection}>
+  <h1>{thisCollection}</h1>
 
-<h1>{collectionEnum}</h1>
-
-<ul>
-  {articles.map((article) => (
-    <li>
-      <a href={`/articles/${article.id}`}>{article.data.title}</a>
-    </li>
-  ))}
-</ul>
+  <ul>
+    {types.map(type => {
+      return (
+        <h2>{type}</h2>
+        <ul>
+          {articles[type].map(article => {
+            return(<li><a href=`/articles/${article.id}`>{article.data.title}</a></li>)
+          })}
+        </ul>
+      )
+    })}
+  </ul>
+</BaseLayout>

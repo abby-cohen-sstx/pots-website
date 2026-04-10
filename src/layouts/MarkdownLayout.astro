@@ -10,7 +10,15 @@ import MedicalDisclaimer from '../components/articleLayout/MedicalDisclaimer.ast
 import BaseLayout from "./BaseLayout.astro";
 import * as M from '@/components/markdownTemplate';
 
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+    frontmatter: CollectionEntry<"articles">["data"];
+}
+
 const { frontmatter } = Astro.props;
+console.log(Astro.url.pathname)
+const thisArticleID = Astro.url.pathname.split('/').filter(Boolean).pop() ?? '';
 
 ---
 
@@ -18,7 +26,7 @@ const { frontmatter } = Astro.props;
     <div class="markdownContainer">
         <header style="width: 100%">
             <div class="bodyPadding">
-                <M.PageNavigation />
+                <M.PageNavigation thisArticleID={thisArticleID} />
                 <hr class="light-hr">
 
                 <h1>{frontmatter.header}</h1>
@@ -46,7 +54,7 @@ const { frontmatter } = Astro.props;
             <div class="bodyPadding footerButtonsContainer">
                 <M.LinkShareButtons /> <!--Need to make these not collapse after breakpoint -->
                 <M.MedicalDisclaimer />
-                <M.PageNavigation />
+                <M.PageNavigation thisArticleID={thisArticleID} />
             </div>
             <hr class="heavy-hr">
             <div class="bodyPadding">

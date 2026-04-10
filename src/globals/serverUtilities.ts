@@ -50,30 +50,11 @@ export async function sortArticles() {
     return articles;
 }
 
-export async function filterArticles(collection: string, type: string, sort: boolean = true) {
-    let articles
+export function articlesByType(collection: string, articles: Awaited<ReturnType<typeof getCollection>>) {
 
-    if (sort) {
-        articles = await sortArticles();
-    } else {
-        articles = await getCollection("articles");
-    }
+    const filteredArticles = articles.filter(article => article.data.collection === collection)
 
-    return articles.filter(article => article.data.collection === collection && article.data.type === type);
-}
-
-export async function articlesByType(collection: string, sort: boolean = true) {
-    let articles
-
-    if (sort) {
-        articles = await sortArticles();
-    } else {
-        articles = await getCollection("articles");
-    }
-
-    articles.filter(article => article.data.collection === collection)
-
-    const byType = articles.reduce((accumulator, article) => {
+    return filteredArticles.reduce((accumulator, article) => {
         const type = article.data.type;
 
         // Initialize type array if it doesn't exist:
@@ -84,20 +65,11 @@ export async function articlesByType(collection: string, sort: boolean = true) {
 
         return accumulator;
     }, {} as Record<string, typeof articles>);
-
-    return byType;
+    
 }
 
-export async function articlesByCollectionAndType(sort: boolean = true) {
-    let articles
-
-    if (sort) {
-        articles = await sortArticles();
-    } else {
-        articles = await getCollection("articles");
-    }
-
-    const byCollection = articles.reduce((accumulator, article) => {
+export function articlesByCollectionAndType(articles: Awaited<ReturnType<typeof getCollection>>) {
+    return articles.reduce((accumulator, article) => {
         const collection = article.data.collection;
         const type = article.data.type;
 
@@ -112,6 +84,4 @@ export async function articlesByCollectionAndType(sort: boolean = true) {
 
         return accumulator;
     }, {} as Record<string, Record<string, typeof articles>>);
-
-    return byCollection;
 }
