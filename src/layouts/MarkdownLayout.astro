@@ -17,7 +17,6 @@ interface Props {
 }
 
 const { frontmatter } = Astro.props;
-console.log(Astro.url.pathname)
 const thisArticleID = Astro.url.pathname.split('/').filter(Boolean).pop() ?? '';
 
 ---
@@ -59,6 +58,46 @@ const thisArticleID = Astro.url.pathname.split('/').filter(Boolean).pop() ?? '';
             <hr class="heavy-hr">
             <div class="bodyPadding">
                 <h1>References</h1>
+                <button id="referenceStyleToggle" class="refStyleToggle">
+                    <span class="selector" data-toggled="false">&ensp;</span>
+                    <div class="options">
+                        <div data-selected="true">Original</div>
+                        <div data-selected="false">Stylized</div>
+                    </div>
+                </button>
+
+                <ol id="originalCitations" data-show="true">
+                    {frontmatter?.references?.map(reference => {
+                        return(
+                            <li>
+                                {reference.citation}, <a href={reference.link}>{reference.link}</a>
+                            </li>
+                        )
+                    })}
+                </ol>
+
+                <ol id="stylizedCitations" data-show="false">
+                    {frontmatter?.references?.map(reference => {
+                        const dateObj = new Date(reference.date.toString())
+
+                        return(
+                            <li id={reference.id}>
+                                <p style="font-size: 1.3rem">
+                                    <a href={reference.link}> {reference.title} <span style="font-style: italic;">({dateObj.toDateString()})</span> </a>
+                                </p>
+                                <div style="padding-left: 2rem">
+                                    <p style="font-size: 1rem">
+                                        {reference.authors}
+                                    </p>
+                                    <p style="font-size: 1rem; color: #494949; font-style: italic">
+                                        {reference.journal}
+                                    </p>
+                                </div>
+                                <hr class="light-hr" />
+                            </li>
+                        )
+                    })}
+                </ol>
             </div>
             
             
@@ -66,6 +105,34 @@ const thisArticleID = Astro.url.pathname.split('/').filter(Boolean).pop() ?? '';
 
     </div>
 </BaseLayout>
+
+<script>
+    import * as u from "@/globals/browserUtilities"
+
+
+    // Toggle between reference display styles and animate button
+    const refStyleToggle = u.getByID("referenceStyleToggle", HTMLButtonElement);
+    const ogCitations = u.getByID("originalCitations", HTMLOListElement);
+    const myCitations = u.getByID("stylizedCitations", HTMLOListElement);
+
+    refStyleToggle.addEventListener("click", () => {
+        const selector = u.getByQuery(".selector", HTMLSpanElement, refStyleToggle);
+        const divs = u.getAllByQuery("[data-selected]", HTMLDivElement, refStyleToggle);
+
+        u.reverseAttributeBool(selector, "data-toggled");
+
+        divs.forEach(div => {
+            u.reverseAttributeBool(div, "data-selected");
+        })
+
+        if(ogCitations && myCitations) {
+            [ogCitations, myCitations].forEach(list => {
+                u.reverseAttributeBool(list, "data-show")
+            });
+        }
+    })
+    
+</script>
 
 <style lang="scss">
     @use "/src/styles/index" as *;
@@ -85,6 +152,73 @@ const thisArticleID = Astro.url.pathname.split('/').filter(Boolean).pop() ?? '';
 
     .footerButtonsContainer {
         @include flex-column-start;
+    }
+
+    $ref-dark: #232323;
+    $ref-light: #fffefb;
+    
+    $ref-vertical-padding: .5rem;
+    $ref-div-width: 6rem;
+    $ref-selector-offset: .25rem;
+
+    .refStyleToggle {
+        padding: $ref-vertical-padding 0;
+        border-radius: 50rem;
+        border: none;
+        background-color: $ref-dark;
+        position: relative;
+        isolation: isolate;
+        z-index: 3;
+        cursor: pointer;
+
+        .selector {
+            position: absolute;
+            top: $ref-selector-offset;
+            left: $ref-selector-offset;
+
+            z-index: 5;
+
+            min-width: calc($ref-div-width - $ref-selector-offset);
+            padding-block: calc($ref-vertical-padding - $ref-selector-offset);
+
+            background-color: $ref-light;
+            border-radius: 50rem;
+
+            transition: transform .05s;
+
+            &[data-toggled="true"] {
+                transform: translateX(calc($ref-div-width - $ref-selector-offset));
+            }
+        }
+
+        .options {
+            @include flex-row-center;
+
+            div {
+                min-width: $ref-div-width;
+
+                z-index: 10;
+
+                &[data-selected="true"] {
+                    color: $ref-dark;
+                }
+
+                &[data-selected="false"] {
+                    color: $ref-light;
+                }
+            }
+        }
+    }
+
+    #originalCitations, #stylizedCitations {
+
+        &[data-show="true"] {
+            display: auto;
+        }
+
+        &[data-show="false"] {
+            display: none;
+        }
     }
 
 </style>
