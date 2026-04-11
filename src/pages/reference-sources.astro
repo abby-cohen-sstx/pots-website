@@ -1,0 +1,25 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ReferencesSection from "@/components/markdownTemplate/ReferencesSection.astro";
+
+import type { CollectionEntry } from 'astro:content';
+
+type ReferenceList = CollectionEntry<'articles'>['data']['references'];
+
+const references: ReferenceList = [
+    {
+        id: "autoimmunity-in-long-covid",
+        authors: "El-Rhermoul FZ, Fedorowski A, Eardley P, Taraborrelli P, Panagopoulos D, Sutton R, Lim PB, Dani M",
+        title: "Autoimmunity in Long Covid and POTS",
+        date: new Date("2023-03-04"),
+        link: "https://doi.org/10.1093/oxfimm/iqad002",
+        journal: "Oxford Open Immunology, Volume 4, Issue 1, 2023, iqad002",
+        citation: "Fatema-Zahra El-Rhermoul, Artur Fedorowski, Philip Eardley, Patricia Taraborrelli, Dimitrios Panagopoulos, Richard Sutton, Phang Boon Lim, Melanie Dani, Autoimmunity in Long Covid and POTS, *Oxford Open Immunology, Volume 4, Issue 1, 2023*, iqad002",
+    }
+]
+
+---
+
+<BaseLayout pageTitle="Sources">
+    <ReferencesSection referenceList={references} showLinks={false} heading="General Reference Sources" />
+</BaseLayout>

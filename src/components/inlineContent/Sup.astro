@@ -1,0 +1,59 @@
+---
+import { getEntry } from 'astro:content';
+
+interface Props {
+    targetIDs: Array<string>,
+}
+
+const { targetIDs } = Astro.props as Props;
+const articleID = Astro.url.pathname.replace("/articles/", "")
+const article = await getEntry("articles", articleID)
+const order = article?.data.referenceOrder
+
+const orderIndex = new Map<string, number>();
+order?.forEach((id, index) => orderIndex.set(id, index));
+
+const textContent = targetIDs.map(id => {
+    return (orderIndex.get(id) || 0) + 1
+}).sort()
+
+const first = order ? order[textContent[0] - 1] : targetIDs[0]
+---
+
+<sup><a class="superscriptLink" href={`#original:${first}`}>[{textContent.join(",")}]</a></sup>
+
+<script>
+    import * as u from "@/globals/browserUtilities";
+    const links = u.getAllByQuery(".superscriptLink", HTMLAnchorElement);
+
+    // Update href destinations when reference style is toggled
+    const button = u.getByID("referenceStyleToggle", HTMLButtonElement);
+    const selector = u.getByQuery(".selector", HTMLSpanElement, button);
+    
+    const observer = new MutationObserver(() => {
+        const newStatus = selector.getAttribute("data-toggled");
+
+        const prefix = newStatus === "false" ? "original" : "stylized"
+
+        links.forEach(link => {
+            const id = link.href.split("#")[1].split(":")[1]
+            const linkBase = link.href.split("#")[0]
+            
+            link.href = `${linkBase}#${prefix}:${id}`
+        })
+    });
+
+    observer.observe(selector, {
+        attributes: true,
+        attributeFilter: ["data-toggled"]
+    });
+</script>
+
+<style lang="scss">
+    @use "/src/styles/index" as *;
+
+    sup a {
+        font-size: .75rem;
+        color: $link-color;
+    }
+</style>

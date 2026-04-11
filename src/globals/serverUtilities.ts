@@ -33,18 +33,18 @@ export async function sortArticles() {
 
     // Sort all articles according to orderIndex
     articles.sort((a, b) => {
-    const ai = orderIndex.get(a.id);
-    const bi = orderIndex.get(b.id);
+        const ai = orderIndex.get(a.id);
+        const bi = orderIndex.get(b.id);
 
-    // Both explicitly ordered:
-    if (ai !== undefined && bi !== undefined) return ai - bi;
+        // Both explicitly ordered:
+        if (ai !== undefined && bi !== undefined) return ai - bi;
 
-    // Priortize explicitly ordered articles over non-explicitly ordered:
-    if (ai !== undefined) return -1;
-    if (bi !== undefined) return 1;
+        // Priortize explicitly ordered articles over non-explicitly ordered:
+        if (ai !== undefined) return -1;
+        if (bi !== undefined) return 1;
 
-    // Neither ordered:
-    return 0;
+        // Neither ordered:
+        return 0;
     });
 
     return articles;
@@ -84,4 +84,27 @@ export function articlesByCollectionAndType(articles: Awaited<ReturnType<typeof 
 
         return accumulator;
     }, {} as Record<string, Record<string, typeof articles>>);
+}
+
+export function sortReferences(
+    list: Awaited<ReturnType<typeof getCollection>>[number]["data"]["references"],
+    order: Array<string>
+) {
+    // Same sort logic as sortArticles()
+    const orderIndex = new Map<string, number>();
+    order.forEach((id, index) => orderIndex.set(id, index));
+
+    list?.sort((a, b) => {
+        const ai = orderIndex.get(a.id);
+        const bi = orderIndex.get(b.id);
+
+        if (ai !== undefined && bi !== undefined) return ai - bi;
+
+        if (ai !== undefined) return -1;
+        if (bi !== undefined) return 1;
+
+        return 0;
+    });
+
+    return list;
 }

@@ -37,6 +37,7 @@ const articles = defineCollection({
         collection: z.enum(COLLECTION_LIST),
         type: z.enum(["Overviews", "Deep Dives", "Resources"]),
         references: References.optional(),
+        referenceOrder: z.array(z.string()).optional(),
     }),
 });
 
