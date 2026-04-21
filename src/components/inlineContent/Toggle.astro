@@ -1,6 +1,11 @@
 ---
-const { label } = Astro.props;
+import { string } from 'astro:schema';
 
+interface Props {
+    label: string;
+}
+
+const { label } = Astro.props as Props;
 
 ---
 
