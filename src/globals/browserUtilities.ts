@@ -1,4 +1,6 @@
-export type ClassOf<T> = { new (...args: any[]): T }; // javascript is so weird... this syntax is disgusting lol
+import { string } from "astro:schema";
+
+export type ClassOf<T> = { new (...args: any[]): T };
 
 // Gets element by ID and checks that it is of the expected type
 export function getByID<T extends Element>(
@@ -45,4 +47,26 @@ export function getAllByQuery<T extends Element>(
 // Remove all characters except a-z, 0-9, and whitespaces
 export function validateSearch(searchTerm: string) {
     return searchTerm.replace(/[^a-z0-9\s]/gi, '');
+}
+
+export function boolToString(bool: boolean) {
+    if(bool) {
+        return "true";
+    } else {
+        return "false";
+    }
+}
+
+export function stringToBool(string: string) {
+    if(string === "true") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+export function reverseAttributeBool(element: HTMLElement, attributeName: string) {
+    const currentState = element.getAttribute(attributeName);
+    const newState = !stringToBool(currentState || "");
+    element.setAttribute(attributeName, boolToString(newState));
 }

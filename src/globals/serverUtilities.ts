@@ -33,46 +33,28 @@ export async function sortArticles() {
 
     // Sort all articles according to orderIndex
     articles.sort((a, b) => {
-    const ai = orderIndex.get(a.id);
-    const bi = orderIndex.get(b.id);
+        const ai = orderIndex.get(a.id);
+        const bi = orderIndex.get(b.id);
 
-    // Both explicitly ordered:
-    if (ai !== undefined && bi !== undefined) return ai - bi;
+        // Both explicitly ordered:
+        if (ai !== undefined && bi !== undefined) return ai - bi;
 
-    // Priortize explicitly ordered articles over non-explicitly ordered:
-    if (ai !== undefined) return -1;
-    if (bi !== undefined) return 1;
+        // Priortize explicitly ordered articles over non-explicitly ordered:
+        if (ai !== undefined) return -1;
+        if (bi !== undefined) return 1;
 
-    // Neither ordered:
-    return 0;
+        // Neither ordered:
+        return 0;
     });
 
     return articles;
 }
 
-export async function filterArticles(collection: string, type: string, sort: boolean = true) {
-    let articles
+export function articlesByType(collection: string, articles: Awaited<ReturnType<typeof getCollection>>) {
 
-    if (sort) {
-        articles = await sortArticles();
-    } else {
-        articles = await getCollection("articles");
-    }
+    const filteredArticles = articles.filter(article => article.data.collection === collection)
 
-    return articles.filter(article => article.data.collection === collection && article.data.type === type);
-}
-
-export async function articlesByType(collection: string, sort: boolean = true, articles?: Awaited<ReturnType<typeof getCollection>>) {
-
-    if (sort) {
-        articles = await sortArticles();
-    } else {
-        articles = await getCollection("articles");
-    }
-
-    articles.filter(article => article.data.collection === collection)
-
-    const byType = articles.reduce((accumulator, article) => {
+    return filteredArticles.reduce((accumulator, article) => {
         const type = article.data.type;
 
         // Initialize type array if it doesn't exist:
@@ -83,20 +65,11 @@ export async function articlesByType(collection: string, sort: boolean = true, a
 
         return accumulator;
     }, {} as Record<string, typeof articles>);
-
-    return byType;
+    
 }
 
-export async function articlesByCollectionAndType(sort: boolean = true) {
-    let articles
-
-    if (sort) {
-        articles = await sortArticles();
-    } else {
-        articles = await getCollection("articles");
-    }
-
-    const byCollection = articles.reduce((accumulator, article) => {
+export function articlesByCollectionAndType(articles: Awaited<ReturnType<typeof getCollection>>) {
+    return articles.reduce((accumulator, article) => {
         const collection = article.data.collection;
         const type = article.data.type;
 
@@ -111,6 +84,27 @@ export async function articlesByCollectionAndType(sort: boolean = true) {
 
         return accumulator;
     }, {} as Record<string, Record<string, typeof articles>>);
+}
 
-    return byCollection;
+export function sortReferences(
+    list: Awaited<ReturnType<typeof getCollection>>[number]["data"]["references"],
+    order: Array<string>
+) {
+    // Same sort logic as sortArticles()
+    const orderIndex = new Map<string, number>();
+    order.forEach((id, index) => orderIndex.set(id, index));
+
+    list?.sort((a, b) => {
+        const ai = orderIndex.get(a.id);
+        const bi = orderIndex.get(b.id);
+
+        if (ai !== undefined && bi !== undefined) return ai - bi;
+
+        if (ai !== undefined) return -1;
+        if (bi !== undefined) return 1;
+
+        return 0;
+    });
+
+    return list;
 }

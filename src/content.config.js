@@ -11,6 +11,20 @@ import { z } from 'astro/zod';
 
 import { COLLECTION_LIST } from "@/globals/collectionList"
 
+
+const References = z.array(
+    z.object({
+        id: z.string(),
+        authors: z.string(),
+        title: z.string(),
+        date: z.date(),
+        link: z.url(),
+        journal: z.string(),
+        citation: z.string(),
+    })
+)
+
+
 // 4. Define your collection
 const articles = defineCollection({
     loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/pages/articles" }),
@@ -20,9 +34,10 @@ const articles = defineCollection({
         header: z.string(),
         subheader: z.string(),
         pubDate: z.date(),
-        // tags: z.array(z.string()),
         collection: z.enum(COLLECTION_LIST),
-        type: z.enum(["Overviews", "Deep Dives", "Resources"])
+        type: z.enum(["Overviews", "Deep Dives", "Resources"]),
+        references: References.optional(),
+        referenceOrder: z.array(z.string()).optional(),
     }),
 });
 

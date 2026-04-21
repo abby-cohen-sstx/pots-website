@@ -1,15 +1,39 @@
-<nav class="pageNavContainer">
-    <a style="font-weight: bold;">Section Title</a>
-    <div class="pageSwapContainer">
-        <a>&#8592; Previous page</a>
-        <a>Next page &#8594;</a>
+---
+import { getEntry } from "astro:content";
+
+import * as u from "@/globals/serverUtilities"
+
+const { thisArticleID } = Astro.props;
+
+const thisArticle = await getEntry("articles", thisArticleID);
+const thisCollection = thisArticle?.data.collection;
+const thisType = thisArticle?.data.type;
+
+const allArticles = await u.sortArticles();
+const filteredArticles = allArticles.filter(article => article.data.collection === thisCollection && article.data.type === thisType);
+
+const thisIndex = filteredArticles.findIndex(article => article.id === thisArticleID);
+const nextIndex = thisIndex === filteredArticles.length - 1 ?  0 : thisIndex + 1;
+const previousIndex = thisIndex === 0 ? filteredArticles.length - 1 : thisIndex - 1;
+
+const nextArticle = await getEntry("articles", filteredArticles[nextIndex].id);
+const previousArticle = await getEntry("articles", filteredArticles[previousIndex].id);
+
+---
+
+
+<nav class="mainContainer">
+    <a href=`/collections/${thisCollection?.toLowerCase()}`>{thisCollection}&ensp;/&ensp;{thisType}</a>
+    <div class="linkContainer">
+        <a href=`/articles/${previousArticle?.id}`>&#8592; {previousArticle?.data.title}</a>
+        <a href=`/articles/${nextArticle?.id}`> {nextArticle?.data.title} &#8594;</a>
     </div>
 </nav>
 
 <style lang="scss">
     @use "/src/styles/index" as *;
 
-    .pageNavContainer {
+    .mainContainer {
         width: 100%;
         margin-top: 20px;
 
@@ -17,14 +41,21 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+
+        a {
+            text-decoration: none;
+            color: rgb(99, 99, 99);
+
+            &:hover {
+                text-decoration: underline;
+                text-decoration-color: rgb(40, 40, 40);
+                text-decoration-thickness: .7px;
+                cursor: pointer;
+            }
+        }
     }
 
-    .pageNavContainer a:hover {
-        text-decoration: underline;
-        cursor: pointer;
-    }
-
-    .pageSwapContainer {
+    .linkContainer {
         display: flex;
         flex-direction: row;
         justify-content: center;
