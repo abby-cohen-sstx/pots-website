@@ -62,8 +62,7 @@ export async function filterArticles(collection: string, type: string, sort: boo
     return articles.filter(article => article.data.collection === collection && article.data.type === type);
 }
 
-export async function articlesByType(collection: string, sort: boolean = true) {
-    let articles
+export async function articlesByType(collection: string, sort: boolean = true, articles?: Awaited<ReturnType<typeof getCollection>>) {
 
     if (sort) {
         articles = await sortArticles();
