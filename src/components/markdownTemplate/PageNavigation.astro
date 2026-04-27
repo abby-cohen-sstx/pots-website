@@ -3,6 +3,8 @@ import { getEntry } from "astro:content";
 
 import * as u from "@/globals/serverUtilities"
 
+import RoundArrow from "@/images/RoundArrow.svg";
+
 const { thisArticleID } = Astro.props;
 
 const thisArticle = await getEntry("articles", thisArticleID);
@@ -23,10 +25,16 @@ const previousArticle = await getEntry("articles", filteredArticles[previousInde
 
 
 <nav class="mainContainer">
-    <a href=`/collections/${thisCollection?.toLowerCase()}`>{thisCollection}&ensp;/&ensp;{thisType}</a>
+    <a href=`/collections/${thisCollection?.toLowerCase()}`><span class="darkGrayText">{thisCollection}&ensp;</span><span class="lightGrayText">»&ensp;{thisType}</span></a>
     <div class="linkContainer">
-        <a href=`/articles/${previousArticle?.id}`>&#8592; {previousArticle?.data.title}</a>
-        <a href=`/articles/${nextArticle?.id}`> {nextArticle?.data.title} &#8594;</a>
+        <a href=`/articles/${previousArticle?.id}` class="tooltipContainer" >
+            <span class="svgContainer darkGrayText"><RoundArrow style="transform: rotate(180deg)" />Previous Article</span>
+            <span class="tooltipText">{previousArticle?.data.title}</span>
+        </a>
+        <a href=`/articles/${nextArticle?.id}` class="tooltipContainer">
+            <span class="svgContainer darkGrayText">Next Article <RoundArrow /></span>
+            <span class="tooltipText">{nextArticle?.data.title}</span>
+        </a>
     </div>
 </nav>
 
@@ -41,18 +49,6 @@ const previousArticle = await getEntry("articles", filteredArticles[previousInde
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-
-        a {
-            text-decoration: none;
-            color: rgb(99, 99, 99);
-
-            &:hover {
-                text-decoration: underline;
-                text-decoration-color: rgb(40, 40, 40);
-                text-decoration-thickness: .7px;
-                cursor: pointer;
-            }
-        }
     }
 
     .linkContainer {
@@ -75,4 +71,51 @@ const previousArticle = await getEntry("articles", filteredArticles[previousInde
             width: 100%;
         }
     }
+
+    .svgContainer {
+        @include flex-row-center;
+        gap: .5rem;
+
+        svg {
+            width: 1rem;
+            height: 1rem;
+        }
+    }
+
+    .tooltipContainer {
+        position: relative; /* must set to position tooltipText absolute */
+        display: inline-block;
+
+        a {
+            text-decoration: none;
+        }
+
+        &:hover {
+            border-bottom: 1px solid $light-gray-text;
+            cursor: pointer;
+        }
+
+        .tooltipText {
+            visibility: hidden;
+            width: max-content;
+            background-color: #fff;
+            color: $light-gray-text;
+            text-align: center;
+            font-style: italic;
+            border-radius: 6px;
+            border: 1px solid #ececec;
+            padding: 5px 10px;
+
+            position: absolute;
+            z-index: 1;
+            top: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        &:hover .tooltipText {
+            visibility: visible;
+        }
+    }
+
 </style>
