@@ -26,18 +26,18 @@ if (frontmatter && frontmatter.referenceOrder) {
         <header style="width: 100%">
             <div class="bodyPadding">
                 <M.PageNavigation thisArticleID={thisArticleID} />
-                <hr class="light-hr">
-
-                <h1>{frontmatter.header}</h1>
-                <h2>{frontmatter.subheader}</h2>
-
-                <div class="headerButtonsContainer">
-                    <M.ExpandFootnotes />
+            </div>
+            <hr class="extra-light-hr">
+            <div class="bodyPadding" style="margin-bottom: 3rem">
+                <div style="display: flex; flex-direction: row; justify-content:space-between; align-content: center;">
+                    <h1>{frontmatter.header}</h1>
                     <M.LinkShareButtons />
                 </div>
+                
+                <h2>{frontmatter.subheader}</h2>
             </div>
 
-            <hr class="heavy-hr">
+            <hr class="light-hr">
         </header>
 
         <div class="bodyPadding">
@@ -48,14 +48,17 @@ if (frontmatter && frontmatter.referenceOrder) {
             </main>
         </div>
         
+        <div class="bodyPadding" style="display: flex; flex-direction: row; justify-content: flex-start; width: 100%; margin-top: 2rem;">
+            <M.LinkShareButtons />
+        </div>
+
         <footer style="width: 100%">
-            <hr class="light-hr">
+            <hr class="extra-light-hr">
             <div class="bodyPadding footerButtonsContainer">
-                <M.LinkShareButtons /> <!--Need to make these not collapse after breakpoint -->
                 <M.MedicalDisclaimer />
                 <M.PageNavigation thisArticleID={thisArticleID} />
             </div>
-            <hr class="heavy-hr">
+            <hr class="light-hr">
             <div class="bodyPadding">
                 <M.ReferencesSection referenceList={sortedList} showLinks={true} heading="References" />
             </div>
@@ -71,13 +74,22 @@ if (frontmatter && frontmatter.referenceOrder) {
         padding: 0px 5px;
     }
 
-    .markdownContainer {
-        @include flex-column-center;
+    h1, h2 {
+        font-family: "Koh Santepheap", sans-serif;
     }
 
-    .headerButtonsContainer {
-        @include flex-row-space-between;
-        margin-top: 40px;
+    h1 {
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    h2 {
+        max-width: 60%;
+        font-weight: 500;
+    }
+
+    .markdownContainer {
+        @include flex-column-center;
     }
 
     .footerButtonsContainer {

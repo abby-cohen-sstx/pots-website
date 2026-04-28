@@ -1,58 +1,57 @@
 ---
-import placeholderImage from '@/images/placeholder.jpg';
+import ShareArrow from "@/images/ShareArrow.svg";
+import LinkIcon from "@/images/LinkIcon.svg";
 ---
 
-<div class="linkShare">
-    <div class="shareContainer">
-        <img src={placeholderImage.src}></img>
-        <span>Share</span>
+<div class="container">
+    <div class="svgContainer">
+        <ShareArrow />
     </div>
-
-    <div class="shareContainer">
-        <img src={placeholderImage.src}></img>
-        <span>Link</span>
+    <div class="svgContainer">
+        <LinkIcon />
     </div>
 </div>
 
 <style lang="scss">
     @use "/src/styles/index" as *;
 
-    .linkShare {
+    $icon-size: 1rem;
+    $padding: 1.25rem;
+    $hover-addition: .1rem;
+    $icon-color: #4569EB;
+
+    .container {
         display: flex;
         flex-direction: row;
         justify-content: center;
         align-items: center;
-
-        gap: 20px;
+        gap: .4rem;
     }
 
-    .shareContainer {
+    .svgContainer {
+        
+        width: calc($icon-size + $padding);
+        height: calc($icon-size + $padding);
+
         display: flex;
-        flex-direction: row;
         justify-content: center;
         align-items: center;
 
-        border: 1px solid rgb(200, 200, 200);
-        border-radius: 5px;
-    }
+        background-color: $icon-color;
+        border-radius: 100%;
 
-    .shareContainer * {
-        padding: 5px 5px;
-    }
-
-    .linkShare img {
-        width: 30px;
-        height: 30px;
-    }
-
-    .shareContainer:hover {
         cursor: pointer;
-        background-color: rgb(247, 247, 247);
-    }
 
-    @media only screen and (max-width: $breakpoint) {
-        .linkShare span {
-            display: none;
+        &:hover svg {
+            width: calc($icon-size + $hover-addition);
+            height: calc($icon-size + $hover-addition);
+        }
+
+        svg {
+            width: $icon-size;
+            height: $icon-size;
+
+            transition: width 0.1s ease, height 0.1s ease;
         }
     }
 

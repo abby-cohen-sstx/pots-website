@@ -25,13 +25,13 @@ const previousArticle = await getEntry("articles", filteredArticles[previousInde
 
 
 <nav class="mainContainer">
-    <a href=`/collections/${thisCollection?.toLowerCase()}`><span class="darkGrayText">{thisCollection}&ensp;</span><span class="lightGrayText">»&ensp;{thisType}</span></a>
+    <a href=`/collections/${thisCollection?.toLowerCase()}` class="borderUnderline"><span class="darkGrayText">{thisCollection}&ensp;</span><span class="lightGrayText">»&ensp;{thisType}</span></a>
     <div class="linkContainer">
-        <a href=`/articles/${previousArticle?.id}` class="tooltipContainer" >
+        <a href=`/articles/${previousArticle?.id}` class="tooltipContainer borderUnderline" >
             <span class="svgContainer darkGrayText"><RoundArrow style="transform: rotate(180deg)" />Previous Article</span>
             <span class="tooltipText">{previousArticle?.data.title}</span>
         </a>
-        <a href=`/articles/${nextArticle?.id}` class="tooltipContainer">
+        <a href=`/articles/${nextArticle?.id}` class="tooltipContainer borderUnderline">
             <span class="svgContainer darkGrayText">Next Article <RoundArrow /></span>
             <span class="tooltipText">{nextArticle?.data.title}</span>
         </a>
@@ -41,14 +41,27 @@ const previousArticle = await getEntry("articles", filteredArticles[previousInde
 <style lang="scss">
     @use "/src/styles/index" as *;
 
+    .borderUnderline {
+        border-bottom: 1px solid transparent;
+
+        &:hover {
+            border-bottom: 1px solid $light-gray-text;
+            cursor: pointer;
+        }
+    }
+
     .mainContainer {
         width: 100%;
-        margin-top: 20px;
+        margin-block: 1rem;
 
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+
+        a {
+            text-decoration: none;
+        }
     }
 
     .linkContainer {
@@ -60,13 +73,13 @@ const previousArticle = await getEntry("articles", filteredArticles[previousInde
     }
 
     @media only screen and (max-width: $breakpoint) {
-        .pageNavContainer {
+        .mainContainer {
             flex-direction: column;
             align-items: flex-start;
-            gap: 10px;
+            gap: 1rem;
         }
 
-        .pageSwapContainer {
+        .linkContainer {
             justify-content: space-between;
             width: 100%;
         }
@@ -85,15 +98,6 @@ const previousArticle = await getEntry("articles", filteredArticles[previousInde
     .tooltipContainer {
         position: relative; /* must set to position tooltipText absolute */
         display: inline-block;
-
-        a {
-            text-decoration: none;
-        }
-
-        &:hover {
-            border-bottom: 1px solid $light-gray-text;
-            cursor: pointer;
-        }
 
         .tooltipText {
             visibility: hidden;
