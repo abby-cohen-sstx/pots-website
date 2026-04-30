@@ -17,90 +17,92 @@ import { COLLECTION_LIST } from "@/globals/collectionList";
 
 const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
 ---
+<div class="topContainer">
+    <nav id="outerNavContainer">
+        <div class="topNav">
 
-<nav id="outerNavContainer">
-    <div class="topNav">
-
-        <!--Default nav bar on wide screens -->
-        <ul class="wideNav">
-            <li><NavHome /></li>
-            <li>
-                <!--List of collections -->
-                <ul id="wideNavLinks">
-                    {COLLECTION_LIST.map(collection => (
-                        <li class="collectionLink">
-                            <span id={`linkTo${collection}`}>
-                                <a href={`/collections/${collection.toLowerCase()}`}>{collection}</a>
-                                <button id={`buttonFor${collection}`}>
-                                    <Arrow />
-                                </button>
-                            </span>
-                        </li>
-                    ))}
-                </ul>
-            </li>
-            
-            <li class="wideIconsContainer">
-                <div class="svgContainer settingsContainer">
-                    <SettingsIcon />
-                </div>
-                <div class="searchOuterContainer">
-                    <div class="svgContainer searchIconContainer">
-                        <SearchIconWidget />
-                    </div>
-                    <div class="searchBarContainer">
-                        <SearchWidget />
-                    </div>
-                </div>
-            </li>
-        </ul>
-
-        <!--Appears when hovering over wideNavLinks -->
-        <div id="widePopup">
-            {COLLECTION_LIST.map(collection => {
-                const types = Object.keys(byCollection[collection] ?? {});
-
-                return(
-                    <div class={`collectionContainer ${collection}`} id={`containerFor${collection}`} style="display: none;">
-                        {types.map(type => (
-                            <div class="typeContainer">
-                                <h2>{type.toLocaleUpperCase()}</h2>
-
-                                <ul>
-                                    {(byCollection[collection]?.[type] ?? []).slice(0, ARTICLES_DISPLAY_LIMIT).map(article => (
-                                        <li>
-                                            <a href={`/articles/${article.id}`} class="linkInList">
-                                                {article.data.title}
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+            <!--Default nav bar on wide screens -->
+            <ul class="wideNav">
+                <li><NavHome /></li>
+                <li>
+                    <!--List of collections -->
+                    <ul id="wideNavLinks">
+                        {COLLECTION_LIST.map(collection => (
+                            <li class="collectionLink">
+                                <span id={`linkTo${collection}`}>
+                                    <a href={`/collections/${collection.toLowerCase()}`}>{collection}</a>
+                                    <button id={`buttonFor${collection}`}>
+                                        <Arrow />
+                                    </button>
+                                </span>
+                            </li>
                         ))}
-                    </div>
-                )
+                    </ul>
+                </li>
                 
-            })}
+                <li class="wideIconsContainer">
+                    <div class="svgContainer settingsContainer">
+                        <SettingsIcon />
+                    </div>
+                    <div class="searchOuterContainer">
+                        <div class="svgContainer searchIconContainer">
+                            <SearchIconWidget />
+                        </div>
+                        <div class="searchBarContainer">
+                            <SearchWidget />
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <!--Appears when hovering over wideNavLinks -->
+            <div id="widePopup">
+                {COLLECTION_LIST.map(collection => {
+                    const types = Object.keys(byCollection[collection] ?? {});
+
+                    return(
+                        <div class={`collectionContainer ${collection}`} id={`containerFor${collection}`} style="display: none;">
+                            {types.map(type => (
+                                <div class="typeContainer">
+                                    <h2>{type.toLocaleUpperCase()}</h2>
+
+                                    <ul>
+                                        {(byCollection[collection]?.[type] ?? []).slice(0, ARTICLES_DISPLAY_LIMIT).map(article => (
+                                            <li>
+                                                <a href={`/articles/${article.id}`} class="linkInList">
+                                                    {article.data.title}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+                    )
+                    
+                })}
+            </div>
+
+            <!--Default nav bar on narrow screens -->
+            <ul class="narrowNav">
+                <li class="narrowToggleContainer">
+                    <label for="narrowMenuToggle" class="svgContainer">
+                        <OpenMenuIcon />
+                    </label>
+                </li>
+
+                <li>
+                    <NavHome />
+                </li>
+                
+                <li class="svgContainer searchIconContainer">
+                    <SearchIconWidget />
+                </li>
+            </ul>
         </div>
-
-        <!--Default nav bar on narrow screens -->
-        <ul class="narrowNav">
-            <li class="narrowToggleContainer">
-                <label for="narrowMenuToggle" class="svgContainer">
-                    <OpenMenuIcon />
-                </label>
-            </li>
-
-            <li>
-                <NavHome />
-            </li>
-            
-            <li class="svgContainer searchIconContainer">
-                <SearchIconWidget />
-            </li>
-        </ul>
-    </div>
-</nav>
+    </nav>
+    <div>table of contents</div>
+</div>
 
 <!--Saves narrow popup state without javascript -->
 <input type="checkbox" id="narrowMenuToggle" style="display:none" />

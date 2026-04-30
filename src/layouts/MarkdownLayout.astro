@@ -22,14 +22,15 @@ if (frontmatter && frontmatter.referenceOrder) {
 ---
 
 <BaseLayout pageTitle={frontmatter.title}>
-    <div class="markdownContainer">
+    <div class="tableContainer">A</div>
+    <div class="mainContainer">
         <header style="width: 100%">
             <div class="bodyPadding">
                 <M.PageNavigation thisArticleID={thisArticleID} />
             </div>
             <hr class="extra-light-hr">
             <div class="bodyPadding" style="margin-bottom: 3rem">
-                <div style="display: flex; flex-direction: row; justify-content:space-between; align-content: center;">
+                <div class="headerContainer">
                     <h1>{frontmatter.header}</h1>
                     <M.LinkShareButtons />
                 </div>
@@ -65,6 +66,7 @@ if (frontmatter && frontmatter.referenceOrder) {
         </footer>
 
     </div>
+    <div style="background-color:blueviolet">B</div>
 </BaseLayout>
 
 <style lang="scss">
@@ -79,7 +81,6 @@ if (frontmatter && frontmatter.referenceOrder) {
     }
 
     h1 {
-        margin-bottom: 1rem;
         font-weight: 600;
     }
 
@@ -88,12 +89,42 @@ if (frontmatter && frontmatter.referenceOrder) {
         font-weight: 500;
     }
 
-    .markdownContainer {
+    .mainContainer {
         @include flex-column-center;
+    }
+
+    .headerContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content:space-between;
+        align-content: center;
+
+        margin-bottom: 1rem;
     }
 
     .footerButtonsContainer {
         @include flex-column-start;
+    }
+
+    .tableContainer {
+        position: absolute;
+        width: calc(50% - ($max-width / 2) + $global-inline-padding);
+        min-height: 100%;
+        left: 0px;
+        top: 0px;
+        z-index: 50;
+
+        background-color: aqua;
+    }
+
+    @media only screen and (max-width: $breakpoint) {
+        h2 {
+            max-width: 100%;
+        }
+
+        .tableContainer {
+            display: none;
+        }
     }
 
 </style>

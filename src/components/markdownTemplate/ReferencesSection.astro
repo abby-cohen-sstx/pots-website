@@ -147,6 +147,13 @@ const { referenceList, showLinks, heading } = Astro.props as Props;
         margin-bottom: 3rem;
     }
 
+    @media only screen and (max-width: $breakpoint) {
+        .headingContainer {
+            @include flex-column-start;
+            gap: .5rem;
+        }
+    }
+
     ol {
         list-style-position: inside;
     }
