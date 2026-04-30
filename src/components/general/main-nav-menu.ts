@@ -128,11 +128,14 @@ export default function initMainNav() {
     // Hide nav bar when scrolling down; display when scrolling up
     let lastY = window.scrollY;
     let hidden = false;
+
+    const height = getComputedStyle(document.documentElement).getPropertyValue('--js-accsssible-nav-height');
+
     window.addEventListener("scroll", () => {
         const currentY = window.scrollY;
 
         if (currentY > lastY && !hidden) { // Scrolling down
-            outerContainer.style.transform = "translateY(-100%)";
+            outerContainer.style.transform = `translateY(-${height})`;
             hidePopup();
             hidden = true;
         } else if (currentY < lastY && hidden) { // Scrolling up
