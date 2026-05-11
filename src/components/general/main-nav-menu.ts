@@ -117,7 +117,7 @@ export default function initMainNav() {
     });
 
     // Close popup if the user clicks anywhere outside of the nav bar
-    document.body.addEventListener("click", (event) => {
+    document.body.addEventListener("click", event => {
         const target = event.target;
         if (!(target instanceof Node)) return;
         if (!wideNavLinks.contains(target) && !widePopup.contains(target)) {
@@ -127,20 +127,19 @@ export default function initMainNav() {
 
     // Hide nav bar when scrolling down; display when scrolling up
     let lastY = window.scrollY;
-    let hidden = false;
 
     const height = getComputedStyle(document.documentElement).getPropertyValue('--js-accsssible-nav-height');
+    const showTransform = "translateY(0)";
+    const hideTransform = `translateY(-${height})`
+
 
     window.addEventListener("scroll", () => {
         const currentY = window.scrollY;
-
-        if (currentY > lastY && !hidden) { // Scrolling down
-            outerContainer.style.transform = `translateY(-${height})`;
+        if ((currentY > lastY) && (outerContainer.style.transform != hideTransform)) { // Scrolling down
+            outerContainer.style.transform = hideTransform;
             hidePopup();
-            hidden = true;
-        } else if (currentY < lastY && hidden) { // Scrolling up
-            outerContainer.style.transform = "translateY(0)";
-            hidden = false;
+        } else if ((currentY < lastY) && (outerContainer.style.transform != showTransform)) { // Scrolling up
+            outerContainer.style.transform = showTransform;
         }
 
         lastY = currentY;

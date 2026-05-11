@@ -99,10 +99,6 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
             </li>
         </ul>
     </div>
-
-    <div class="tableContainer">
-        Table of contents
-    </div>
 </nav>
 
 <!--Saves narrow popup state without javascript -->
@@ -238,7 +234,7 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
 
     /* Top nav bar */
     #outerNavContainer {
-        position: sticky;
+        position: fixed;
         top: 0px;
         width: 100%;
 
@@ -549,15 +545,5 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
         }
 
     }
-
-    .tableContainer {
-        width: 100%;
-        background-color: #ffffff;
-        border-bottom: 1px solid $nav-bar-border;
-
-        @include flex-row-center;
-        padding: .5rem 0rem;
-    }
-
 </style>
 

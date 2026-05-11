@@ -1,0 +1,94 @@
+---
+import { render } from "astro:content";
+import { getEntry } from "astro:content";
+
+interface Props {
+    thisArticleID: string,
+    position: "bottom" | "side",
+}
+
+const { thisArticleID, position } = Astro.props as Props;
+const thisArticle = await getEntry("articles", thisArticleID);
+
+if(!thisArticle) {
+    throw new Error(`Table of Contents could not find thisArticle. ID: ${thisArticleID}`)
+}
+
+const { headings } = await render(thisArticle)
+const filteredHeadings = headings.filter(heading => heading.depth <=5)
+---
+
+{filteredHeadings.length > 0 && (
+    <nav class=`container ${position}Style`>
+        <p>TABLE OF CONTENTS</p>
+        <ul>
+            {filteredHeadings.map((heading) => (
+                <li id=`${position}TocLinks`>
+                    <a href={`#${heading.slug}`} class={`depth${heading.depth}`}>{heading.text}</a>
+                </li>
+            ))}
+        </ul>
+    </nav>
+)}
+
+<style lang="scss">
+    @use "/src/styles/index" as *;
+
+    nav {
+        margin-bottom: 2rem;
+    }
+
+    .sideStyle {
+        max-width: 40ch;
+        margin-left: 2rem;
+    }
+
+    .bottomStyle {
+        max-width: 50ch;
+    }
+
+    p {
+        font-weight: 550;
+    }
+
+    ul {
+        list-style: none;
+
+        li {
+            margin-bottom: .25rem;
+        }
+
+        a {
+            text-decoration: none;
+            max-width: 100%;
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .depth3{
+        font-weight: 450;
+    }
+
+    .depth4 {
+        padding-left: 1rem;
+        font-weight: 350;
+    }
+
+    .depth5 {
+        padding-left: 2rem;
+        font-weight: 300;
+    }
+
+    :global(article :is(h1, h2, h3, h4, h5, h6)) {
+        scroll-margin-top: 5rem;
+    }
+
+</style>
+

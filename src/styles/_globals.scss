@@ -9,6 +9,10 @@
     font-family: "Jost", sans-serif;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background-color: $primary-background-color;
 }

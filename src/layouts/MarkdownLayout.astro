@@ -22,7 +22,7 @@ if (frontmatter && frontmatter.referenceOrder) {
 ---
 
 <BaseLayout pageTitle={frontmatter.title}>
-    <div class="tableContainer"></div>
+    
     <div class="mainContainer">
         <header style="width: 100%">
             <div class="bodyPadding">
@@ -63,10 +63,58 @@ if (frontmatter && frontmatter.referenceOrder) {
             <div class="bodyPadding">
                 <M.ReferencesSection referenceList={sortedList} showLinks={true} heading="References" />
             </div>
+            <div class="tocPadding"></div>
         </footer>
+    </div>
 
+    <div class="sideTocContainer">
+        <M.TableOfContents thisArticleID={thisArticleID} position="side" />
+    </div>
+
+    <div class="bottomToc" id="bottomTocOuterHolder">
+        <div class="tocContainer" id="bottomTocContainer" data-open="false">
+            <M.TableOfContents thisArticleID={thisArticleID} position="bottom" />
+        </div>
+        <button class="bottomTocButton" id="bottomTocButton">Show Table of Contents</button>
     </div>
 </BaseLayout>
+
+<script>
+    import * as u from "@/globals/browserUtilities"
+
+    const bottomToc = u.getByID("bottomTocOuterHolder", HTMLDivElement);
+    const bottomButton = u.getByID("bottomTocButton", HTMLButtonElement);
+    const bottomContainer = u.getByID("bottomTocContainer", HTMLDivElement);
+    let bottomOpen = false;
+
+    function closeBottomToc() {
+        bottomOpen = false;
+        // bottomContainer.style.display = "none";
+        bottomContainer.setAttribute("data-open", "false")
+        bottomButton.textContent = "Show Table of Contents";
+    }
+
+    function openBottomToc() {
+        bottomOpen = true;
+        // bottomContainer.style.display = "block";
+        bottomContainer.setAttribute("data-open", "true")
+        bottomButton.textContent = "Hide Table of Contents";
+    }
+
+    bottomButton.onclick = () => {bottomOpen?closeBottomToc():openBottomToc()};
+
+    // Close when the user clicks off the menu or clicks on a link
+    document.body.addEventListener("click", event => {
+        const target = event.target;
+        if (!(target instanceof Node)) return;
+        if ((!bottomToc.contains(target)) || (target.parentElement?.id === "bottomTocLinks")) {
+            closeBottomToc();
+        }
+    })
+
+
+
+</script>
 
 <style lang="scss">
     @use "/src/styles/index" as *;
@@ -75,17 +123,19 @@ if (frontmatter && frontmatter.referenceOrder) {
         padding: 0px 5px;
     }
 
-    h1, h2 {
+    h1, h2, h3 {
         font-family: "Koh Santepheap", sans-serif;
     }
 
     h1 {
-        font-weight: 600;
+        font-weight: 700;
+        font-size: 2.5rem;
     }
 
     h2 {
         max-width: 60%;
         font-weight: 500;
+        font-size: 1.5rem;
     }
 
     .mainContainer {
@@ -105,23 +155,83 @@ if (frontmatter && frontmatter.referenceOrder) {
         @include flex-column-start;
     }
 
-    .tableContainer {
-        position: absolute;
+    
+    @media only screen and (max-width: $breakpoint) {
+        h2 {
+            max-width: 100%;
+        }
+    }
+
+    .sideTocContainer {
+        
+        position: fixed;
         width: calc(50% - ($max-width / 2) + $global-inline-padding);
         min-height: 100%;
         left: 0px;
         top: 0px;
         z-index: 50;
 
-        // background-color: aqua;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        display: none;
+        
     }
 
-    @media only screen and (max-width: $breakpoint) {
-        h2 {
-            max-width: 100%;
+    .bottomToc {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        padding: .5rem;
+        border-top: 1px solid #2e2e2e;
+        z-index: 100000;
+        @include flex-column-center;
+
+        .bottomTocButton {
+            background-color: #ffffff;
+            padding: .25rem .5rem;
+            border: 1px solid #404040;
+            border-radius: 3px;
+
+            &:hover {
+                background-color: #f8f8f8;
+                cursor: pointer;
+            }
+        }
+    }
+
+    @supports (interpolate-size: allow-keywords) {
+        .bottomToc {
+            interpolate-size: allow-keywords;
         }
 
-        .tableContainer {
+        .tocContainer {
+            block-size: 0;
+            transition: content-visibility, block-size;
+            transition-duration: .6s;
+            transition-behavior: allow-discrete;
+            
+            overflow: hidden;
+        }
+
+        .tocContainer[data-open="true"] {
+            block-size: auto;
+        }
+    }
+
+    .tocPadding {
+        margin-bottom: 4rem;
+    }
+
+    @media only screen and (min-width: 120rem) {
+        .sideTocContainer {
+            display: flex;
+        }
+
+        .bottomToc {
             display: none;
         }
     }
