@@ -23,7 +23,7 @@ const types = Object.keys(articles)
   <ul>
     {types.map(type => {
       return (
-        <h2>{type}</h2>
+        <h2 class={`typeTitle${type}`}>{type}</h2>
         <ul>
           {articles[type].map(article => {
             return(<li><a href=`/articles/${article.id}`>{article.data.title}</a></li>)
@@ -33,3 +33,7 @@ const types = Object.keys(articles)
     })}
   </ul>
 </BaseLayout>
+
+<style lang="scss">
+
+</style>

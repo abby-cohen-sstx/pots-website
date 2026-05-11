@@ -73,6 +73,10 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
                                             </a>
                                         </li>
                                     ))}
+
+                                    <li>
+                                        <a class="linkInList seeAll">See all {type.toLocaleLowerCase()}...</a>
+                                    </li>
                                 </ul>
                             </div>
                         ))}
@@ -169,8 +173,6 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
 <style lang="scss">
     @use "/src/styles/index" as *;
 
-    $nav-height: 3rem;
-
     :root {
         --js-accsssible-nav-height: #{$nav-height};
     }
@@ -230,6 +232,12 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
             text-decoration: underline;
             text-decoration-color: $link-underline;
         }
+    }
+
+    .seeAll {
+        font-style: italic;
+        color: #747474;
+        cursor: pointer;
     }
 
     /* Top nav bar */
