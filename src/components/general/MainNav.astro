@@ -75,7 +75,7 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
                                     ))}
 
                                     <li>
-                                        <a class="linkInList seeAll">See all {type.toLocaleLowerCase()}...</a>
+                                        <a href={`/collections/${collection.toLowerCase()}`} class="linkInList seeAll">See all {type.toLocaleLowerCase()}...</a>
                                     </li>
                                 </ul>
                             </div>
