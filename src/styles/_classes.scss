@@ -41,6 +41,8 @@
     $icon-top-pos: calc(($search-height - $icon-size) / 2);
     $icon-horizontal-pos: calc($icon-padding + $height-buffer);
 
+    width: 70%;
+
     .wrapper {
         position: relative;
         min-width: $default-width;
