@@ -97,7 +97,13 @@
 
     .resultsList {
         li {
-            margin: .5rem 0;
+            list-style: none;
+
+            > div {
+                border: 1px solid rgb(220, 220, 220);
+                border-radius: 5px;
+                padding: 10px;
+            }
             
             a {
                 text-decoration: none;
@@ -107,6 +113,10 @@
                 &:hover {
                     text-decoration: underline;
                 }
+            }
+
+            .search-highlight {
+                background-color: rgb(255, 255, 0);
             }
         }
     }
