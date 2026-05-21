@@ -97,7 +97,8 @@
 
     .resultsList {
         li {
-            list-style: none;
+            // list-style: none;
+            padding-bottom: .5rem;
 
             > div {
                 border: 1px solid rgb(220, 220, 220);
