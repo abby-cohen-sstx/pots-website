@@ -18,18 +18,91 @@ const types = Object.keys(articles)
 
 ---
 <BaseLayout pageTitle={thisCollection}>
-  <h1>{thisCollection}</h1>
 
-  <ul>
-    {types.map(type => {
+  <ul class="outerContainer">
+    {types.map((type, i) => {
       return (
-        <h2>{type}</h2>
-        <ul>
-          {articles[type].map(article => {
-            return(<li><a href=`/articles/${article.id}`>{article.data.title}</a></li>)
-          })}
-        </ul>
+        <div class="innerContainer">
+          {i === 0 ? <h1 class={`pageTitle${type}`}>{thisCollection}</h1> : <h1 class="h1Placeholder" aria-hidden="true"></h1>}
+          {type !== 'Resources' && <h2 id={`typetitle${type}`} class={`typeTitle${type}`}>{type.toUpperCase()}</h2>}
+          <ul class="list">
+            {articles[type].map(article => {
+              return(<li><a href=`/articles/${article.id}`>{article.data.title}</a></li>)
+            })}
+          </ul>
+        </div>
       )
     })}
   </ul>
 </BaseLayout>
+
+<style lang="scss">
+@use "/src/styles/index" as *;
+  h1 {
+    font-family: "Koh Santepheap", sans-serif;
+    margin-bottom: 2rem;
+    text-wrap: nowrap;
+  }
+
+  .pageTitleResources {
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .h1Placeholder {
+    visibility: hidden;
+    user-select: none;
+    pointer-events: none;
+    min-height: 1em;
+  }
+
+  h2 {
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+
+  .outerContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .innerContainer {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+  }
+
+  .list {
+    list-style-position: outside;
+    padding-left: 1rem;
+    width: 100%;
+  }
+
+  a {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    margin-bottom: .25rem;
+
+    &:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+
+  @media only screen and (max-width: $breakpoint) {
+    .outerContainer {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .innerContainer {
+      width: 80%;
+    }
+  }
+</style>

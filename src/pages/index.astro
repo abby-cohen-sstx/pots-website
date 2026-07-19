@@ -6,14 +6,17 @@ import * as G from "@/components/general";
 
 <BaseLayout pageTitle={"Home"}>
 	<main class="homeContainer">
-		<h1>Hello</h1>
-		<p>Hello world!</p>
+		<h1>Hello world!</h1>
 
 	</main>
 </BaseLayout>
 
 <style lang="scss">
 	@use "/src/styles/index" as *;
+
+	h1 {
+		font-family: "Koh Santepheap", sans-serif;
+	}
 
 	.homeContainer {
 		@include flex-center;

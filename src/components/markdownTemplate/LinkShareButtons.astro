@@ -4,13 +4,32 @@ import LinkIcon from "@/images/LinkIcon.svg";
 ---
 
 <div class="container">
-    <div class="svgContainer">
+    <button class="svgContainer">
         <ShareArrow />
-    </div>
-    <div class="svgContainer">
+    </button>
+    <button class="svgContainer" id="copyLinkButton" aria-label="Copy page link to clipboard">
         <LinkIcon />
-    </div>
+    </button>
 </div>
+
+<script>
+    import * as u from "@/globals/browserUtilities"
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const copyButtons = u.getAllByQuery("#copyLinkButton", HTMLButtonElement);
+
+        copyButtons.forEach((button) => {
+            button.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(window.location.href);
+                    button.setAttribute('aria-label', 'Link copied to clipboard');
+                } catch (error) {
+                    console.error('Unable to copy link to clipboard:', error);
+                }
+            });
+        });
+    });
+</script>
 
 <style lang="scss">
     @use "/src/styles/index" as *;
@@ -19,6 +38,8 @@ import LinkIcon from "@/images/LinkIcon.svg";
     $padding: 1.25rem;
     $hover-addition: .1rem;
     $icon-color: #4569EB;
+    $icon-active: #4061db;
+    $icon-border: #1d3486;
 
     .container {
         display: flex;
@@ -39,19 +60,34 @@ import LinkIcon from "@/images/LinkIcon.svg";
 
         background-color: $icon-color;
         border-radius: 100%;
-
+        border: 2px solid $icon-border;
         cursor: pointer;
-
+        
         &:hover svg {
+            /*
             width: calc($icon-size + $hover-addition);
             height: calc($icon-size + $hover-addition);
+            */
+
+            transform: translateY(-1px);
         }
+
+        &:active {
+            // background-color: $icon-active;
+            
+            svg {
+                transform: translateY(1px);
+            }
+        }
+        
+        
+        
 
         svg {
             width: $icon-size;
             height: $icon-size;
 
-            transition: width 0.1s ease, height 0.1s ease;
+            // transition: width 0.1s ease, height 0.1s ease;
         }
     }
 

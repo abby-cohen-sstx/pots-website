@@ -10,7 +10,8 @@ import OpenMenuIcon from "@/images/OpenMenuIcon.svg";
 import CloseMenuIcon from "@/images/CloseMenuIcon.svg";
 import SettingsIcon from "@/images/SettingsIcon.svg";
 
-const ARTICLES_DISPLAY_LIMIT = 4;
+const WIDE_ARTICLES_DISPLAY_LIMIT = 4;
+const NARROW_ARTICLES_DISPLAY_LIMIT = 10;
 
 // Load all articles
 import { COLLECTION_LIST } from "@/globals/collectionList";
@@ -66,13 +67,17 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
                                 <h2>{type.toLocaleUpperCase()}</h2>
 
                                 <ul>
-                                    {(byCollection[collection]?.[type] ?? []).slice(0, ARTICLES_DISPLAY_LIMIT).map(article => (
+                                    {(byCollection[collection]?.[type] ?? []).slice(0, WIDE_ARTICLES_DISPLAY_LIMIT).map(article => (
                                         <li>
                                             <a href={`/articles/${article.id}`} class="linkInList">
                                                 {article.data.title}
                                             </a>
                                         </li>
                                     ))}
+
+                                    <li>
+                                        <a href={`/collections/${collection.toLowerCase()}`} class="linkInList seeAll">See all {type.toLocaleLowerCase()}...</a>
+                                    </li>
                                 </ul>
                             </div>
                         ))}
@@ -139,13 +144,16 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
                                 <h2>{type.toLocaleUpperCase()}</h2>
 
                                 <ul>
-                                    {(byCollection[collection]?.[type] ?? []).slice(0, ARTICLES_DISPLAY_LIMIT).map(article => (
+                                    {(byCollection[collection]?.[type] ?? []).slice(0, NARROW_ARTICLES_DISPLAY_LIMIT).map(article => (
                                         <li>
                                             <a href={`/articles/${article.id}`} class="linkInList">
                                                 {article.data.title}
                                             </a>
                                         </li>
                                     ))}
+                                    <li>
+                                        <a href={`/collections/${collection.toLowerCase()}`} class="linkInList seeAll">See all {type.toLocaleLowerCase()}...</a>
+                                    </li>
                                 </ul>
                             </div>
                         ))}
@@ -154,9 +162,7 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
                 <hr />
             </li>
         )
-        
     })}
-
 
     </menu>
 </nav>
@@ -168,8 +174,6 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
 
 <style lang="scss">
     @use "/src/styles/index" as *;
-
-    $nav-height: 3rem;
 
     :root {
         --js-accsssible-nav-height: #{$nav-height};
@@ -230,6 +234,12 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
             text-decoration: underline;
             text-decoration-color: $link-underline;
         }
+    }
+
+    .seeAll {
+        font-style: italic;
+        color: #747474;
+        cursor: pointer;
     }
 
     /* Top nav bar */
@@ -424,6 +434,8 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
 
     #narrowPopup {
         @include fullscreen-popup;
+        overscroll-behavior: none;
+        padding-bottom: 4rem;
 
         display: none;
         flex-direction: column;
@@ -439,6 +451,7 @@ const byCollection = u.articlesByCollectionAndType(await u.sortArticles());
             list-style: none;
             min-height: $nav-height;
             border-bottom: 1px solid $nav-bar-border;
+            position: sticky;
         }
 
         menu {

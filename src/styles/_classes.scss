@@ -41,6 +41,8 @@
     $icon-top-pos: calc(($search-height - $icon-size) / 2);
     $icon-horizontal-pos: calc($icon-padding + $height-buffer);
 
+    width: 70%;
+
     .wrapper {
         position: relative;
         min-width: $default-width;
@@ -95,7 +97,14 @@
 
     .resultsList {
         li {
-            margin: .5rem 0;
+            // list-style: none;
+            padding-bottom: .5rem;
+
+            > div {
+                border: 1px solid rgb(220, 220, 220);
+                border-radius: 5px;
+                padding: 10px;
+            }
             
             a {
                 text-decoration: none;
@@ -105,6 +114,10 @@
                 &:hover {
                     text-decoration: underline;
                 }
+            }
+
+            .search-highlight {
+                background-color: rgb(255, 255, 0);
             }
         }
     }

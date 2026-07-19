@@ -132,9 +132,10 @@ export default function initMainNav() {
     const showTransform = "translateY(0)";
     const hideTransform = `translateY(-${height})`
 
-
     window.addEventListener("scroll", () => {
         const currentY = window.scrollY;
+        
+        // console.log(isWideNavVisible);
         if ((currentY > lastY) && (outerContainer.style.transform != hideTransform)) { // Scrolling down
             outerContainer.style.transform = hideTransform;
             hidePopup();

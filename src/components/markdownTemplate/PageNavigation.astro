@@ -25,7 +25,10 @@ const previousArticle = await getEntry("articles", filteredArticles[previousInde
 
 
 <nav class="mainContainer">
-    <a href=`/collections/${thisCollection?.toLowerCase()}` class="borderUnderline"><span class="darkGrayText">{thisCollection}&ensp;</span><span class="lightGrayText">»&ensp;{thisType}</span></a>
+    <a href=`/collections/${thisCollection?.toLowerCase()}` class="borderUnderline">
+        <span class="darkGrayText">{thisCollection}</span>{thisCollection !== "Resources" && <span class="lightGrayText">&ensp;»&ensp;{thisType}</span>}
+    </a>
+
     <div class="linkContainer">
         <a href=`/articles/${previousArticle?.id}` class="tooltipContainer borderUnderline" >
             <span class="svgContainer darkGrayText"><RoundArrow style="transform: rotate(180deg)" />Previous Article</span>
@@ -52,7 +55,6 @@ const previousArticle = await getEntry("articles", filteredArticles[previousInde
 
     .mainContainer {
         width: 100%;
-        margin-block: 3rem 1rem;
 
         display: flex;
         flex-direction: row;
@@ -101,11 +103,19 @@ const previousArticle = await getEntry("articles", filteredArticles[previousInde
 
         .tooltipText {
             visibility: hidden;
-            width: max-content;
+            max-width: 40ch;
+
             background-color: #fff;
             color: $light-gray-text;
+
             text-align: center;
             font-style: italic;
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            
+
             border-radius: 6px;
             border: 1px solid #ececec;
             padding: 5px 10px;
