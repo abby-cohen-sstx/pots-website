@@ -1,0 +1,39 @@
+---
+/*
+ * Renders a citation superscript like [2,3], linking to the first cited
+ * reference in the article's references section.
+ *
+ * Authored in MDX prose as <Cite ids="key1 key2" /> — no import needed;
+ * [...slug].astro injects this component via <Content components={{ Cite }}>.
+ *
+ * nums and firstId are NOT written by the author: the remark-citations plugin
+ * (src/plugins/remark-citations.mjs) computes them from the order of first
+ * appearance in the prose and injects them as extra attributes at build time.
+ */
+
+interface Props {
+    ids: string; // authored: space-separated reference ids (read by the plugin, not by this component)
+    nums?: string; // injected by remark-citations: display numbers, e.g. "2,3"
+    firstId?: string; // injected by remark-citations: id of the lowest-numbered reference
+}
+
+const { nums, firstId } = Astro.props;
+
+if (!nums || !firstId) {
+    throw new Error(
+        "Cite: nums/firstId props are missing — they are injected by the remark-citations " +
+        "plugin, so check that it is registered in astro.config.mjs"
+    );
+}
+---
+
+<sup><a href={`#ref-${firstId}`}>[{nums}]</a></sup>
+
+<style lang="scss">
+    @use "/src/styles/index" as *;
+
+    sup a {
+        font-size: .75rem;
+        color: $link-color;
+    }
+</style>

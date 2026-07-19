@@ -22,7 +22,7 @@ export const ARTICLE_ORDER = [
   "introduction-to-pots-management",
   "general-treatment-strategies",
   "lifestyle-and-pots",
-  "medications-for-pots",
+  "medication-for-pots",
 
   // Deep Dives
   "exercise-and-pots",

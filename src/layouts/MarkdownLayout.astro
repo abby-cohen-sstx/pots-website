@@ -1,32 +1,47 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import * as M from '@/components/markdownTemplate';
-import * as u from "@/globals/serverUtilities";
+
+import { REFERENCES } from "@/globals/references";
 
 import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
 
 interface Props {
-    frontmatter: CollectionEntry<"articles">["data"];
+    article: CollectionEntry<"articles">;
+    headings: MarkdownHeading[];
+    citedIds: string[];
 }
 
-const { frontmatter } = Astro.props;
-const thisArticleID = Astro.url.pathname.split('/').filter(Boolean).pop() ?? '';
+const { article, headings, citedIds } = Astro.props;
+const frontmatter = article.data;
 
-let sortedList
-if (frontmatter && frontmatter.referenceOrder) {
-    sortedList = u.sortReferences(frontmatter?.references, frontmatter?.referenceOrder)
-} else {
-    [] // handled in ReferenceSection.astro
-}
+// Resolve cited ids against the central store, in citation order. A typo'd id
+// fails the build here, naming the article and the id.
+const referenceList = citedIds.map(id => {
+    const reference = REFERENCES[id];
+    if (!reference) {
+        throw new Error(`Article "${article.id}" cites unknown reference id "${id}" — check src/globals/references.json`);
+    }
+    return reference;
+});
+
+// "Last updated" shows updatedDate when present, else pubDate. Formatted in
+// UTC because YAML dates parse to midnight UTC — local-time formatting would
+// show the previous day (same bug class as the old citation dates).
+const displayDate = frontmatter.updatedDate ?? frontmatter.pubDate;
+const displayDateText = displayDate.toLocaleDateString("en-US", {
+    timeZone: "UTC", year: "numeric", month: "long", day: "numeric",
+});
 
 ---
 
-<BaseLayout pageTitle={frontmatter.title}>
+<BaseLayout pageTitle={frontmatter.title} description={frontmatter.description}>
     
     <div class="mainContainer">
         <header style="width: 100%">
             <div class="bodyPadding">
-                <M.PageNavigation thisArticleID={thisArticleID} />
+                <M.PageNavigation article={article} />
             </div>
             <hr class="extra-light-hr">
             <div class="bodyPadding" style="margin-bottom: 3rem">
@@ -35,7 +50,8 @@ if (frontmatter && frontmatter.referenceOrder) {
                     <M.LinkShareButtons />
                 </div>
                 
-                <h2>{frontmatter.subheader}</h2>
+                <p class="subheader">{frontmatter.subheader}</p>
+                <p class="lastUpdated">Last updated: <time datetime={displayDate.toISOString().split("T")[0]}>{displayDateText}</time></p>
             </div>
 
             <hr class="light-hr">
@@ -57,23 +73,23 @@ if (frontmatter && frontmatter.referenceOrder) {
             <hr class="extra-light-hr">
             <div class="bodyPadding footerButtonsContainer">
                 <M.MedicalDisclaimer />
-                <M.PageNavigation thisArticleID={thisArticleID} />
+                <M.PageNavigation article={article} />
             </div>
             <hr class="light-hr">
             <div class="bodyPadding">
-                <M.ReferencesSection referenceList={sortedList} showLinks={true} heading="References" />
+                <M.ReferencesSection referenceList={referenceList} showLinks={true} heading="References" />
             </div>
             <div class="tocPadding"></div>
         </footer>
     </div>
 
     <div class="sideTocContainer">
-        <M.TableOfContents thisArticleID={thisArticleID} position="side" />
+        <M.TableOfContents headings={headings} position="side" />
     </div>
 
     <div class="bottomToc" id="bottomTocOuterHolder">
         <div class="tocContainer" id="bottomTocContainer" data-open="false">
-            <M.TableOfContents thisArticleID={thisArticleID} position="bottom" />
+            <M.TableOfContents headings={headings} position="bottom" />
         </div>
         <button class="bottomTocButton" id="bottomTocButton">Show Table of Contents</button>
     </div>
@@ -103,11 +119,12 @@ if (frontmatter && frontmatter.referenceOrder) {
 
     bottomButton.onclick = () => {bottomOpen?closeBottomToc():openBottomToc()};
 
-    // Close when the user clicks off the menu or clicks on a link
+    // Close when the user clicks off the menu or clicks on a TOC link
     document.body.addEventListener("click", event => {
         const target = event.target;
-        if (!(target instanceof Node)) return;
-        if ((!bottomToc.contains(target)) || (target.parentElement?.id === "bottomTocLinks")) {
+        if (!(target instanceof Element)) return;
+        const clickedTocLink = target.closest("li.bottomTocLinks") !== null;
+        if (!bottomToc.contains(target) || clickedTocLink) {
             closeBottomToc();
         }
     })
@@ -123,7 +140,7 @@ if (frontmatter && frontmatter.referenceOrder) {
         padding: 0px 5px;
     }
 
-    h1, h2, h3 {
+    h1, .subheader {
         font-family: "Koh Santepheap", sans-serif;
     }
 
@@ -132,23 +149,31 @@ if (frontmatter && frontmatter.referenceOrder) {
         font-size: 2.5rem;
     }
 
-    h2 {
+    .subheader {
         max-width: 60%;
         font-weight: 500;
         font-size: 1.5rem;
     }
 
-    article :global(h3) {
+    .lastUpdated {
+        margin-top: .5rem;
+        font-size: .9rem;
+        color: #747474;
+    }
+
+    /* Article prose starts at h2 — the page h1 is the article header and the
+       subheader is a styled <p>, so ## in markdown is the top section level */
+    article :global(h2) {
         font-weight: 600;
         font-size: 1.5rem;
     }
 
-    article :global(h4) {
+    article :global(h3) {
         font-weight: 600;
         font-size: 1.25rem;
     }
 
-    article :global(h5) {
+    article :global(h4) {
         font-weight: 500;
         font-size: 1.2rem;
     }
@@ -172,7 +197,7 @@ if (frontmatter && frontmatter.referenceOrder) {
 
     
     @media only screen and (max-width: $breakpoint) {
-        h2 {
+        .subheader {
             max-width: 100%;
         }
     }
@@ -186,12 +211,11 @@ if (frontmatter && frontmatter.referenceOrder) {
         top: 0px;
         z-index: 50;
 
-        display: flex;
+        // hidden by default; the 120rem media query below sets display: flex
         flex-direction: column;
         align-items: flex-start;
         justify-content: center;
         display: none;
-        
     }
 
     .bottomToc {
@@ -252,29 +276,3 @@ if (frontmatter && frontmatter.referenceOrder) {
     }
 
 </style>
-
-    <!--Main navigation -->
-    <!--Full header -->
-        <!--Nav to other pages -->
-        <!--Header -->
-        <!--Subheader -->
-        <!--Expand footnotes -->
-        <!--Share and copy link buttons -->
-        <!--Heavy dividng line -->
-    <!--Main content -->
-        <!--Big section title -->
-        <!--Subsection title -->
-        <!--Normal text -->
-        <!--Collapsible footnotes -->
-        <!--Full width images -->
-        <!--Partial width images -->
-        <!--Superscripts for references -->
-    <!--Full footer -->
-        <!--Light dividing line -->
-        <!--Share and copy link buttons -->
-        <!--Nav to other pages -->
-        <!--This isn't medical advice! -->
-    <!--References -->
-        <!--Heavy dividing line -->
-        <!--References title -->
-        <!--Reference list -->

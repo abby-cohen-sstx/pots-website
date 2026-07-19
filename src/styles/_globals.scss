@@ -1,10 +1,6 @@
 @use "./index" as *;
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-
     color: $primary-text-color;
     font-family: "Jost", sans-serif;
 }

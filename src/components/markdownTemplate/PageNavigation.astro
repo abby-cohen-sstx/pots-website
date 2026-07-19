@@ -1,42 +1,44 @@
 ---
-import { getEntry } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 
 import * as u from "@/globals/serverUtilities"
 
 import RoundArrow from "@/images/RoundArrow.svg";
 
-const { thisArticleID } = Astro.props;
+interface Props {
+    article: CollectionEntry<"articles">;
+}
 
-const thisArticle = await getEntry("articles", thisArticleID);
-const thisCollection = thisArticle?.data.collection;
-const thisType = thisArticle?.data.type;
+const { article } = Astro.props;
+const thisCollection = article.data.collection;
+const thisType = article.data.type;
 
 const allArticles = await u.sortArticles();
-const filteredArticles = allArticles.filter(article => article.data.collection === thisCollection && article.data.type === thisType);
+const filteredArticles = allArticles.filter(entry => entry.data.collection === thisCollection && entry.data.type === thisType);
 
-const thisIndex = filteredArticles.findIndex(article => article.id === thisArticleID);
+const thisIndex = filteredArticles.findIndex(entry => entry.id === article.id);
 const nextIndex = thisIndex === filteredArticles.length - 1 ?  0 : thisIndex + 1;
 const previousIndex = thisIndex === 0 ? filteredArticles.length - 1 : thisIndex - 1;
 
-const nextArticle = await getEntry("articles", filteredArticles[nextIndex].id);
-const previousArticle = await getEntry("articles", filteredArticles[previousIndex].id);
+const nextArticle = filteredArticles[nextIndex];
+const previousArticle = filteredArticles[previousIndex];
 
 ---
 
 
 <nav class="mainContainer">
-    <a href=`/collections/${thisCollection?.toLowerCase()}` class="borderUnderline">
+    <a href=`/collections/${thisCollection.toLowerCase()}` class="borderUnderline">
         <span class="darkGrayText">{thisCollection}</span>{thisCollection !== "Resources" && <span class="lightGrayText">&ensp;»&ensp;{thisType}</span>}
     </a>
 
     <div class="linkContainer">
-        <a href=`/articles/${previousArticle?.id}` class="tooltipContainer borderUnderline" >
+        <a href=`/articles/${previousArticle.id}` class="tooltipContainer borderUnderline" >
             <span class="svgContainer darkGrayText"><RoundArrow style="transform: rotate(180deg)" />Previous Article</span>
-            <span class="tooltipText">{previousArticle?.data.title}</span>
+            <span class="tooltipText">{previousArticle.data.title}</span>
         </a>
-        <a href=`/articles/${nextArticle?.id}` class="tooltipContainer borderUnderline">
+        <a href=`/articles/${nextArticle.id}` class="tooltipContainer borderUnderline">
             <span class="svgContainer darkGrayText">Next Article <RoundArrow /></span>
-            <span class="tooltipText">{nextArticle?.data.title}</span>
+            <span class="tooltipText">{nextArticle.data.title}</span>
         </a>
     </div>
 </nav>
@@ -127,7 +129,9 @@ const previousArticle = await getEntry("articles", filteredArticles[previousInde
             transform: translateX(-50%);
         }
 
-        &:hover .tooltipText {
+        // :focus-visible reveals the tooltip for keyboard users too — hover
+        // alone leaves them with no way to see the next/prev article titles
+        &:is(:hover, :focus-visible) .tooltipText {
             visibility: visible;
         }
     }

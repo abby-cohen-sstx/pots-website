@@ -1,2 +1,5 @@
+// Only forward files that emit no CSS (variables, mixins). Every component
+// @use's this, so anything with real rules would be duplicated into each one.
+// Rule-emitting stylesheets are imported once in BaseLayout.astro instead.
 @forward "variables";
 @forward "mixins";

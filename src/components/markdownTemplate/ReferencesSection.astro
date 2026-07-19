@@ -1,69 +1,37 @@
 ---
-
-import type { CollectionEntry } from 'astro:content';
-
-type ReferenceList = CollectionEntry<'articles'>['data']['references'];
+import type { Reference } from "@/globals/references";
+import { formatCitation } from "@/globals/formatCitation";
 
 interface Props {
-  referenceList: ReferenceList,
-  showLinks: boolean,
-  heading: string,
+    referenceList: Reference[] | undefined,
+    showLinks: boolean,
+    heading: string,
+    // h2 on article pages (the article header is the page's h1);
+    // reference-sources.astro passes h1 since this heading is its only one
+    headingLevel?: "h1" | "h2",
 }
 
-const { referenceList, showLinks, heading } = Astro.props as Props;
+const { referenceList, showLinks, heading, headingLevel = "h2" } = Astro.props as Props;
+// A capitalized variable holding a tag name renders as that tag (dynamic tag)
+const Heading = headingLevel;
 
 ---
 
 <div class="headingContainer">
-    <h1>{heading}</h1>
-    {referenceList && referenceList.length > 0 && (
-        <button id="referenceStyleToggle" class="toggle">
-            <span class="selector" data-toggled="false">&ensp;</span>
-            <div class="options">
-                <div data-selected="true">Original</div>
-                <div data-selected="false">Stylized</div>
-            </div>
-        </button>
-    )}
+    <Heading>{heading}</Heading>
 </div>
 
-{referenceList && (
-    <ol id="originalCitations" data-show="true">
-        {referenceList.map(reference => {
-            const split = reference.citation.split("*")
-            
-            return(
-                <li id={`original:${reference.id}`}>
-                    {split[0]}
-                    <span style="font-style: italic;">{split[1]}</span>{split[2] ? (split[2] + ".") : "."}
-                    <a href={reference.link}>{reference.link}</a>
-                </li>
-            )
-        })}
-    </ol>
-
-    <ol id="stylizedCitations" data-show="false">
-        {referenceList.map((reference, i) => {
-            const dateObj = new Date(reference.date.toString())
-
-            return(
-                <li id={`stylized:${reference.id}`}>
-                    <p class="line1">
-                        <a href={reference.link}> {reference.title}&#x2000; <span style="font-style: italic; color: inherit">({dateObj.toDateString()})</span> </a>
-                    </p>
-                    <div class="inset">
-                        <p class="line2">
-                            {reference.authors}
-                        </p>
-                        <p class="line3">
-                            {reference.journal}
-                        </p>
-                    </div>
-                    {i < referenceList.length - 1 && (<hr class="light-hr" />)}
-                    
-                </li>
-            )
-        })}
+{referenceList && referenceList.length > 0 && (
+    <ol>
+        {referenceList.map(reference => (
+            <li id={`ref-${reference.id}`}>
+                {formatCitation(reference).map(run =>
+                    run.italic ? <i>{run.text}</i> : run.text
+                )}
+                {" "}
+                <a href={reference.link}>{reference.link}</a>
+            </li>
+        ))}
     </ol>
 )}
 
@@ -75,66 +43,17 @@ const { referenceList, showLinks, heading } = Astro.props as Props;
             <hr class="light-hr">
             <p>
                 In addition to the previously listed sources which are specific to this page, you can find a
-                <a href="../reference-sources/">list of general reference sources here</a>
+                <a href="/reference-sources/">list of general reference sources here</a>
             </p>
         </>
         )
 
         : (<p style="margin-top: -1.5rem">
-            This article does not have any specific citations, but it is based on 
-            <a href="../reference-sources/">this list of general reference sources</a>
+            This article does not have any specific citations, but it is based on
+            <a href="/reference-sources/">this list of general reference sources</a>
         </p>)
     }
     </>
-)}
-
-<!--Must be included within referenceList && to not cause errors when referenceList is empty -->
-{referenceList && (
-    <script>
-        import * as u from "@/globals/browserUtilities"
-
-
-        // Toggle between reference display styles and animate button
-        const toggle = u.getByID("referenceStyleToggle", HTMLButtonElement);
-        const ogCitations = u.getByID("originalCitations", HTMLOListElement);
-        const myCitations = u.getByID("stylizedCitations", HTMLOListElement);
-
-        toggle.addEventListener("click", () => {
-            const selector = u.getByQuery(".selector", HTMLSpanElement, toggle);
-            const divs = u.getAllByQuery("[data-selected]", HTMLDivElement, toggle);
-
-            u.reverseAttributeBool(selector, "data-toggled");
-
-            divs.forEach(div => {
-                u.reverseAttributeBool(div, "data-selected");
-            })
-
-            if(ogCitations && myCitations) {
-                [ogCitations, myCitations].forEach(list => {
-                    u.reverseAttributeBool(list, "data-show")
-                });
-            }
-
-            // Update href so target highlight persists after toggle
-            if((window.location.pathname != "/reference-sources/") && (window.location.href.includes("#")) && (window.location.href.split("#")[1].includes(":"))) {
-                const currentRef = window.location.href;
-                const currentSelection = currentRef.split("#")[1].split(":")[0];
-                const newSelection = currentSelection === "original" ? "stylized" : "original";
-                window.location.href = currentRef.replace(currentSelection, newSelection);
-            }
-            
-        })
-
-        // Remove highlight if user clicks away
-        document.addEventListener("click", event => {
-            const t = (event.target as HTMLElement)
-
-            if((t.nodeName != "A") && !u.getByID("referenceStyleToggle", HTMLButtonElement).contains(t) && (window.location.pathname != "/reference-sources/")) {
-                window.location.href = window.location.href.split("#")[0] + "#none"
-            }
-        })
-
-    </script>
 )}
 
 <style lang="scss">
@@ -145,6 +64,12 @@ const { referenceList, showLinks, heading } = Astro.props as Props;
     .headingContainer {
         @include flex-row-space-between;
         margin-bottom: 3rem;
+
+        // level varies (h1/h2) but the section heading always looks the same
+        :is(h1, h2) {
+            font-size: 2rem;
+            font-weight: 700;
+        }
     }
 
     @media only screen and (max-width: $breakpoint) {
@@ -156,9 +81,7 @@ const { referenceList, showLinks, heading } = Astro.props as Props;
 
     ol {
         list-style-position: inside;
-    }
 
-    #originalCitations {
         li {
             padding: .5rem;
             margin-bottom: 1.5rem;
@@ -170,120 +93,6 @@ const { referenceList, showLinks, heading } = Astro.props as Props;
 
         a {
             text-decoration: underline 1.5px solid #646464;
-        }
-    }
-
-    
-    #stylizedCitations {
-
-        li {
-            margin-bottom: 2rem;
-
-            &:target {
-                .line1 {
-                    background-color: $highlight-color;
-                }
-
-                ::marker {
-                    background-color: $highlight-color;
-                }
-            }
-        }
-
-        .line1 {
-            display: inline;
-            font-size: 1.3rem;
-            
-        }
-
-        .line2 {
-            font-size: 1rem;
-        }
-
-        .line3 {
-            font-size: 1rem;
-            color: #494949;
-            font-style: italic;
-        }
-
-        .inset {
-            margin-left: 2rem;
-        }
-        
-        a {
-            text-decoration: none;
-            color: $link-color;
-
-            &:hover {
-                text-decoration: underline 1.5px solid;
-            }
-        }
-    }
-
-    $toggle-dark: #494949;
-    $toggle-light: #ffffff;
-    
-    $toggle-vertical-padding: .5rem;
-    $toggle-div-width: 6rem;
-    $toggle-selector-offset: .25rem;
-
-    .toggle {
-        padding: $toggle-vertical-padding 0;
-        border-radius: 50rem;
-        border: none;
-        background-color: $toggle-dark;
-        position: relative;
-        isolation: isolate;
-        z-index: 3;
-        cursor: pointer;
-
-        .selector {
-            position: absolute;
-            top: $toggle-selector-offset;
-            left: $toggle-selector-offset;
-
-            z-index: 5;
-
-            min-width: calc($toggle-div-width - $toggle-selector-offset);
-            padding-block: calc($toggle-vertical-padding - $toggle-selector-offset);
-
-            background-color: $toggle-light;
-            border-radius: 50rem;
-
-            transition: transform .05s;
-
-            &[data-toggled="true"] {
-                transform: translateX(calc($toggle-div-width - $toggle-selector-offset));
-            }
-        }
-
-        .options {
-            @include flex-row-center;
-
-            div {
-                min-width: $toggle-div-width;
-
-                z-index: 10;
-
-                &[data-selected="true"] {
-                    color: $toggle-dark;
-                }
-
-                &[data-selected="false"] {
-                    color: $toggle-light;
-                }
-            }
-        }
-    }
-
-    #originalCitations, #stylizedCitations {
-
-        &[data-show="true"] {
-            display: auto;
-        }
-
-        &[data-show="false"] {
-            display: none;
         }
     }
 </style>

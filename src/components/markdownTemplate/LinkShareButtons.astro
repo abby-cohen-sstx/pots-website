@@ -4,31 +4,59 @@ import LinkIcon from "@/images/LinkIcon.svg";
 ---
 
 <div class="container">
-    <button class="svgContainer">
+    <!-- hidden until the script confirms navigator.share exists (mostly mobile);
+         on browsers without it, the copy button next door covers the need -->
+    <button type="button" class="svgContainer shareButton" aria-label="Share this page" hidden>
         <ShareArrow />
     </button>
-    <button class="svgContainer" id="copyLinkButton" aria-label="Copy page link to clipboard">
+    <button type="button" class="svgContainer copyLinkButton" aria-label="Copy page link to clipboard">
         <LinkIcon />
     </button>
+    <!-- role="status" is a polite live region: screen readers announce its text
+         when it changes, and sighted users see the same "Copied!" -->
+    <span class="copyFeedback" role="status"></span>
 </div>
 
 <script>
     import * as u from "@/globals/browserUtilities"
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const copyButtons = u.getAllByQuery("#copyLinkButton", HTMLButtonElement);
+    // This component renders twice per page (header + footer), so always
+    // query all matches and scope feedback to the clicked button's container
+    const copyButtons = u.getAllByQuery(".copyLinkButton", HTMLButtonElement);
 
-        copyButtons.forEach((button) => {
-            button.addEventListener('click', async () => {
+    copyButtons.forEach((button) => {
+        button.addEventListener("click", async () => {
+            const container = button.parentElement;
+            const feedback = container ? u.getByQuery(".copyFeedback", HTMLSpanElement, container) : null;
+
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                if (feedback) {
+                    feedback.textContent = "Copied!";
+                    setTimeout(() => { feedback.textContent = ""; }, 2000);
+                }
+            } catch (error) {
+                console.error("Unable to copy link to clipboard:", error);
+                if (feedback) feedback.textContent = "Copy failed";
+            }
+        });
+    });
+
+    // navigator.share opens the OS share sheet; it exists on most mobile
+    // browsers and some desktop ones. Only reveal the button where it works.
+    if (navigator.share) {
+        const shareButtons = u.getAllByQuery(".shareButton", HTMLButtonElement);
+        shareButtons.forEach((button) => {
+            button.hidden = false;
+            button.addEventListener("click", async () => {
                 try {
-                    await navigator.clipboard.writeText(window.location.href);
-                    button.setAttribute('aria-label', 'Link copied to clipboard');
-                } catch (error) {
-                    console.error('Unable to copy link to clipboard:', error);
+                    await navigator.share({ title: document.title, url: window.location.href });
+                } catch {
+                    // The user closing the share sheet rejects the promise — not an error
                 }
             });
         });
-    });
+    }
 </script>
 
 <style lang="scss">
@@ -36,9 +64,7 @@ import LinkIcon from "@/images/LinkIcon.svg";
 
     $icon-size: 1rem;
     $padding: 1.25rem;
-    $hover-addition: .1rem;
     $icon-color: #4569EB;
-    $icon-active: #4061db;
     $icon-border: #1d3486;
 
     .container {
@@ -50,7 +76,7 @@ import LinkIcon from "@/images/LinkIcon.svg";
     }
 
     .svgContainer {
-        
+
         width: calc($icon-size + $padding);
         height: calc($icon-size + $padding);
 
@@ -62,33 +88,30 @@ import LinkIcon from "@/images/LinkIcon.svg";
         border-radius: 100%;
         border: 2px solid $icon-border;
         cursor: pointer;
-        
-        &:hover svg {
-            /*
-            width: calc($icon-size + $hover-addition);
-            height: calc($icon-size + $hover-addition);
-            */
 
+        // our display: flex would otherwise override the hidden attribute's
+        // built-in display: none (author styles beat browser defaults)
+        &[hidden] {
+            display: none;
+        }
+
+        &:hover svg {
             transform: translateY(-1px);
         }
 
-        &:active {
-            // background-color: $icon-active;
-            
-            svg {
-                transform: translateY(1px);
-            }
+        &:active svg {
+            transform: translateY(1px);
         }
-        
-        
-        
 
         svg {
             width: $icon-size;
             height: $icon-size;
-
-            // transition: width 0.1s ease, height 0.1s ease;
         }
+    }
+
+    .copyFeedback {
+        font-size: .9rem;
+        color: #747474;
     }
 
 </style>

@@ -1,9 +1,19 @@
 ---
+// Reset first so _globals.scss can override it
+import "@/styles/_reset.scss"
 import "@/styles/_globals.scss"
 import "@/styles/_classes.scss";
 import * as G from '@/components/general';
 
-const { pageTitle } = Astro.props;
+interface Props {
+    pageTitle: string;
+    // Meta description for search results and link previews. Optional because
+    // non-article pages (search, collections) don't have one yet; article
+    // pages always pass it (the schema requires it).
+    description?: string;
+}
+
+const { pageTitle, description } = Astro.props;
 
 ---
 
@@ -15,6 +25,9 @@ const { pageTitle } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
+    {description && <meta name="description" content={description} />}
+    <meta property="og:title" content={pageTitle} />
+    {description && <meta property="og:description" content={description} />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

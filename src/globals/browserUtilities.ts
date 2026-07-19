@@ -1,5 +1,3 @@
-import { string } from "astro:schema";
-
 export type ClassOf<T> = { new (...args: any[]): T };
 
 // Gets element by ID and checks that it is of the expected type

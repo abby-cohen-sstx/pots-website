@@ -10,7 +10,6 @@ export async function sortArticles() {
     [{
         id: 'support-groups',
         data: {
-        layout: '/src/layouts/MarkdownLayout.astro',
         title: 'Support Groups for POTS',
         header: 'Support Groups for POTS',
         subheader: 'My subtitle',
@@ -18,7 +17,7 @@ export async function sortArticles() {
         collection: 'Resources',
         type: 'Resources'
         },
-        filePath: 'src/pages/articles/support-groups.mdx',
+        filePath: 'src/content/articles/support-groups.mdx',
         digest: '8cebcce5919bc1a0',
         deferredRender: true,
         collection: 'articles'
@@ -84,28 +83,5 @@ export function articlesByCollectionAndType(articles: Awaited<ReturnType<typeof 
 
         return accumulator;
     }, {} as Record<string, Record<string, typeof articles>>);
-}
-
-export function sortReferences(
-    list: Awaited<ReturnType<typeof getCollection>>[number]["data"]["references"],
-    order: Array<string>
-) {
-    // Same sort logic as sortArticles()
-    const orderIndex = new Map<string, number>();
-    order.forEach((id, index) => orderIndex.set(id, index));
-
-    list?.sort((a, b) => {
-        const ai = orderIndex.get(a.id);
-        const bi = orderIndex.get(b.id);
-
-        if (ai !== undefined && bi !== undefined) return ai - bi;
-
-        if (ai !== undefined) return -1;
-        if (bi !== undefined) return 1;
-
-        return 0;
-    });
-
-    return list;
 }
 

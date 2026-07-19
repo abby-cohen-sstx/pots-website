@@ -1,29 +1,23 @@
 ---
-import { render } from "astro:content";
-import { getEntry } from "astro:content";
+import type { MarkdownHeading } from "astro";
 
 interface Props {
-    thisArticleID: string,
+    headings: MarkdownHeading[],
     position: "bottom" | "side",
 }
 
-const { thisArticleID, position } = Astro.props as Props;
-const thisArticle = await getEntry("articles", thisArticleID);
-
-if(!thisArticle) {
-    throw new Error(`Table of Contents could not find thisArticle. ID: ${thisArticleID}`)
-}
-
-const { headings } = await render(thisArticle)
-const filteredHeadings = headings.filter(heading => heading.depth <=5)
+const { headings, position } = Astro.props as Props;
+// Prose headings run h2-h4; anything outside that range (a stray # or deep
+// #####) is excluded rather than rendered unstyled
+const filteredHeadings = headings.filter(heading => heading.depth >= 2 && heading.depth <= 4)
 ---
 
 {filteredHeadings.length > 0 && (
-    <nav class=`container ${position}Style`>
-        <p>TABLE OF CONTENTS</p>
+    <nav class=`container ${position}Style` aria-label="Table of contents">
+        <p aria-hidden="true">TABLE OF CONTENTS</p>
         <ul>
             {filteredHeadings.map((heading) => (
-                <li id=`${position}TocLinks`>
+                <li class=`${position}TocLinks`>
                     <a href={`#${heading.slug}`} class={`depth${heading.depth}`}>{heading.text}</a>
                 </li>
             ))}
@@ -72,16 +66,16 @@ const filteredHeadings = headings.filter(heading => heading.depth <=5)
         }
     }
 
-    .depth3{
+    .depth2 {
         font-weight: 450;
     }
 
-    .depth4 {
+    .depth3 {
         padding-left: 1rem;
         font-weight: 350;
     }
 
-    .depth5 {
+    .depth4 {
         padding-left: 2rem;
         font-weight: 300;
     }
