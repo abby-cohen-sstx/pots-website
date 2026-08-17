@@ -426,14 +426,11 @@ Planned phases, roughly in order:
    have pending items in `Cleanup Proposals.md`.
 2. **Evaluate systems for major changes** — done for the article system
    (content-collection move + reference redesign, July 2026).
-3. **Finish the article-writing system** — **fundamentals complete
-   (2026-07-19):** all of section 1 of `Cleanup Proposals.md` is implemented.
-   The remaining inline-content additions (proposal 1.15) are nearly done:
-   **callouts, the collapsible toggle list, and external/internal link styling
-   are all implemented (2026-08-16)** — `<Callout>`, `<Toggle>`, and `<Link>`
-   (the prose `a` override). The **only 1.15 item left is the footnote system**,
-   which needs a design discussion first — it must coexist cleanly with the
-   numbered citation superscripts. New prose components inject via the
+3. **Finish the article-writing system** — **complete (2026-08-16):** all of
+   section 1 of `Cleanup Proposals.md` is implemented, including the proposal
+   1.15 inline-content additions — `<Callout>` (note/tip/warning/anecdote),
+   `<Toggle>` (collapsible sections with accordion grouping), and `<Link>`
+   (internal/external link styling). New prose components inject via the
    `components` prop in `articles/[...slug].astro`, like `Cite` and `Figure`.
 4. **Fix up the remaining systems** — search, navigation, collection pages,
    home. Starts after the 1.15 additions.
