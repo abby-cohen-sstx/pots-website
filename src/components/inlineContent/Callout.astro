@@ -78,6 +78,13 @@ const label = title ?? variant.label;
 
         // The SVG arrives via set:html, so Astro's scoping never tags it —
         // :global() reaches it, the same reason Figure needs it for <Image>.
+        // color: inherit repairs currentColor: the global `* { color }` in
+        // _globals.scss (cleanup 6.1) sets black directly on the <svg> and its
+        // shapes, which otherwise blacks out the icon. Remove once 6.1 lands.
+        :global(svg),
+        :global(svg *) {
+            color: inherit;
+        }
         :global(svg) {
             width: 1.25rem;
             height: 1.25rem;

@@ -1,0 +1,81 @@
+---
+/*
+ * Prose link: the <a> element for article MDX. Injected via [...slug].astro's
+ * <Content components={{ a: Link }}>, so every Markdown link [text](url) in
+ * prose routes through here — authors write normal Markdown, nothing special.
+ *
+ * A link is EXTERNAL when its href starts with http://, https://, or // (a
+ * protocol-relative URL) — i.e. it leaves the site. External links get a
+ * distinct color and an external-link icon, and open in a new tab with
+ * rel="noopener noreferrer" plus a visually-hidden "(opens in new tab)" so
+ * screen-reader users are warned before they follow it. Everything else
+ * (/paths, #anchors, mailto:) is INTERNAL: the normal in-site link, same tab,
+ * no icon.
+ *
+ * Note: citation superscripts are NOT affected — those <a>s are rendered inside
+ * Cite.astro, not from Markdown, so they never reach this override.
+ */
+
+interface Props {
+    href?: string;
+    title?: string; // Markdown's [text](url "title") produces this; passed through
+}
+
+const { href = "", title } = Astro.props;
+
+// http://, https://, or // (protocol-relative) => the link leaves the site
+const isExternal = /^(https?:)?\/\//i.test(href);
+
+const externalIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
+---
+
+<a
+    href={href}
+    title={title}
+    class:list={["prose-link", isExternal ? "prose-link--external" : "prose-link--internal"]}
+    target={isExternal ? "_blank" : undefined}
+    rel={isExternal ? "noopener noreferrer" : undefined}
+><slot />{isExternal && <Fragment><span class="prose-link__icon" aria-hidden="true" set:html={externalIcon} /><span class="prose-link__newtab"> (opens in new tab)</span></Fragment>}</a>
+
+<style lang="scss">
+    @use "/src/styles/index" as *;
+
+    .prose-link {
+        text-decoration: underline;
+        text-underline-offset: 2px;
+    }
+    .prose-link--internal { color: $link-color; }
+    .prose-link--external { color: $external-link-color; }
+
+    // Inline external-link icon, sized relative to the text. It should inherit
+    // the link color via currentColor, but the global `* { color }` in
+    // _globals.scss (cleanup 6.1) sets black directly on the <svg> and its
+    // shapes, breaking that — so re-assert inheritance down the icon span, the
+    // svg, and its shapes. (Arrives via set:html, hence :global(). Remove the
+    // color: inherit lines once 6.1 lands.)
+    .prose-link__icon,
+    .prose-link__icon :global(svg),
+    .prose-link__icon :global(svg *) {
+        color: inherit;
+    }
+    .prose-link__icon :global(svg) {
+        width: .75em;
+        height: .75em;
+        margin-left: .15em;
+        vertical-align: -0.02em;
+    }
+
+    // "(opens in new tab)" — read by screen readers, hidden from sight. Becomes
+    // part of the link's accessible name, warning of the new-tab behavior.
+    .prose-link__newtab {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+</style>

@@ -182,6 +182,18 @@ label is lost (the component throws with that hint). The default body `<slot>`
 accepts any MDX including `<Cite>`; the remark plugin walks the whole tree, so a
 citation nested in a toggle is numbered like any other.
 
+**Links**: write plain Markdown links `[text](url)` — the `a` element is
+overridden in prose (`Link.astro`, injected as `a: Link`) to classify each one
+by its `href`. `http://`, `https://`, or `//` → **external**: distinct color
+(`$external-link-color`), an external-link icon, and opens in a new tab
+(`target="_blank"` + `rel="noopener noreferrer"` + a visually-hidden "(opens in
+new tab)"). Everything else (`/paths`, `#anchors`) → **internal**: normal
+in-site link (`$link-color`), same tab, no icon. Citation superscripts are
+unaffected (their `<a>`s come from `Cite`, not Markdown). Note: the inline SVG
+icons in `Link`/`Callout`/`Toggle` carry a `color: inherit` workaround so
+`currentColor` survives the global `* { color }` in `_globals.scss` (cleanup
+6.1) — remove those lines when 6.1 is fixed.
+
 Frontmatter carries **no citation data** — see "References and citations"
 below. Changing the schema means updating every existing article, so schema
 changes are a coordinated migration, not a one-file edit.
@@ -291,12 +303,14 @@ as a namespace:
 - `src/components/inlineContent/` — components used inside MDX prose:
   `Cite` (citation superscripts), `Figure` (optimized images with captions),
   `Callout` (bordered note/tip/warning/anecdote admonitions; variant data in
-  `callout-variants.ts`), and `Toggle` (native-`<details>` collapsible sections;
-  supports accordion grouping and a `slot="summary"` for rich labels). None is
-  **imported in articles** — `articles/[...slug].astro` injects them through the
-  MDX `components` prop, so `<Cite ids="..." />`, `<Figure src="..." ... />`,
-  `<Callout type="..." />`, and `<Toggle summary="..." />` work in any article
-  with zero boilerplate. New prose components should be injected the same way.
+  `callout-variants.ts`), `Toggle` (native-`<details>` collapsible sections;
+  supports accordion grouping and a `slot="summary"` for rich labels), and
+  `Link` (the prose `<a>` override; auto-styles internal vs external links).
+  None is **imported in articles** — `articles/[...slug].astro` injects them
+  through the MDX `components` prop (`Link` mapped to the `a` tag), so
+  `<Cite ids="..." />`, `<Figure src="..." ... />`, `<Callout type="..." />`,
+  `<Toggle summary="..." />`, and plain Markdown links work in any article with
+  zero boilerplate. New prose components should be injected the same way.
 
 Follow the existing pattern when adding a component: create it in the right
 folder, export it from that folder's `index.ts`, and use it through the
@@ -414,15 +428,13 @@ Planned phases, roughly in order:
    (content-collection move + reference redesign, July 2026).
 3. **Finish the article-writing system** — **fundamentals complete
    (2026-07-19):** all of section 1 of `Cleanup Proposals.md` is implemented.
-   The remaining inline-content additions (proposal 1.15) are in progress:
-   the **callout system and the collapsible toggle list are done (2026-08-16)** —
-   `<Callout>` (note/tip/warning/anecdote variants, delivering the planned
-   anecdote callout) and `<Toggle>` (native-`<details>` collapsible sections with
-   accordion grouping and rich-summary slots). Still pending before phase 4: a
-   footnote system (design discussion needed — it must coexist cleanly with the
-   numbered citation superscripts), and distinct styling for external vs internal
-   links. New prose components inject via the `components`
-   prop in `articles/[...slug].astro`, like `Cite` and `Figure`.
+   The remaining inline-content additions (proposal 1.15) are nearly done:
+   **callouts, the collapsible toggle list, and external/internal link styling
+   are all implemented (2026-08-16)** — `<Callout>`, `<Toggle>`, and `<Link>`
+   (the prose `a` override). The **only 1.15 item left is the footnote system**,
+   which needs a design discussion first — it must coexist cleanly with the
+   numbered citation superscripts. New prose components inject via the
+   `components` prop in `articles/[...slug].astro`, like `Cite` and `Figure`.
 4. **Fix up the remaining systems** — search, navigation, collection pages,
    home. Starts after the 1.15 additions.
 5. **Final touches** — style cleanup, polish, and accessibility improvements.

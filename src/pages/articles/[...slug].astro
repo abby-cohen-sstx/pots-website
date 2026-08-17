@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import MarkdownLayout from '@/layouts/MarkdownLayout.astro';
-import { Cite, Figure, Callout, Toggle } from '@/components/inlineContent';
+import { Cite, Figure, Callout, Toggle, Link } from '@/components/inlineContent';
 
 // getStaticPaths() gives astro a list of every page this dynamic route produces. Runs once
 // params = where the page lives
@@ -24,5 +24,5 @@ const citedIds = (remarkPluginFrontmatter.citedIds as string[] | undefined) ?? [
 ---
 
 <MarkdownLayout article={article} headings={headings} citedIds={citedIds}>
-    <Content components={{ Cite, Figure, Callout, Toggle }} />
+    <Content components={{ Cite, Figure, Callout, Toggle, a: Link }} />
 </MarkdownLayout>

@@ -339,8 +339,9 @@ of the site (all authored in prose and injected via the `components` prop in
 - **Footnote system** — needs a design discussion first: footnote markers
   must coexist with the numbered citation superscripts without producing two
   competing number schemes in the same prose.
-- **External vs internal link styling** — visually distinguish links that
-  leave the site from links to other articles.
+- ~~**External vs internal link styling** — visually distinguish links that
+  leave the site from links to other articles.~~ **✅ IMPLEMENTED 2026-08-16**
+  as the `<Link>` prose `a`-override (see below).
 
 > **✅ Callout system — IMPLEMENTED 2026-08-16.** Rather than a one-off anecdote
 > block, built a general `<Callout>` admonition with four starter variants
@@ -388,6 +389,26 @@ of the site (all authored in prose and injected via the `components` prop in
 > numbered correctly by the remark plugin (its tree walk is recursive, so nesting
 > doesn't matter). Verified via full `npm run build`. See CLAUDE.md "Content and
 > articles" for authoring.
+
+> **✅ External vs internal link styling — IMPLEMENTED 2026-08-16.** Built
+> `<Link>` (`src/components/inlineContent/Link.astro`), injected as the `a`-tag
+> override (`components={{ a: Link }}`), so plain Markdown links `[text](url)`
+> are classified automatically — no new authoring syntax. A link is EXTERNAL
+> when its href starts with `http://`, `https://`, or `//`. External: distinct
+> color (`$external-link-color`, added to `_variables.scss`), an external-link
+> icon, and opens in a new tab (`target="_blank"` + `rel="noopener noreferrer"`
+> + a visually-hidden "(opens in new tab)" for screen readers). Internal
+> (`/paths`, `#anchors`): normal in-site link (`$link-color`), same tab, no icon.
+> Citation superscripts are unaffected (their `<a>`s render inside `Cite`, not
+> from Markdown). User chose: new-tab + distinct colors. Verified via build and
+> live computed styles.
+>
+> **Latent bug found and fixed along the way:** the inline-SVG icons in
+> `Callout` and `Toggle` were rendering **black** on the live site (not their
+> accent/gray), because the global `* { color }` (item 6.1) sets `color`
+> directly on every `<svg>` and its shapes, defeating `stroke="currentColor"`.
+> Fixed locally in all three icon components (`Callout`, `Toggle`, `Link`) with
+> `color: inherit` on the svg and its shapes — see 6.1 for the eventual root fix.
 
 ---
 
@@ -635,6 +656,12 @@ the reset's `a:not([class]) { color: currentColor }`. Change to declarations on
 reset). Do this **before** the phase-e styling pass, not during — it changes
 the baseline everything else is judged against. Impacts: `_globals.scss`,
 visual audit of every component.
+
+> **Known fallout already worked around (2026-08-16):** this `* { color }` also
+> blacks out inline SVG icons that use `stroke="currentColor"`. `Callout`,
+> `Toggle`, and `Link` each carry a `color: inherit` workaround (on the svg and
+> its shapes) to survive it. When this item is fixed, remove those `color:
+> inherit` lines and re-verify the three icons still take their intended colors.
 
 ### 6.2 Reset vs. globals overlap — Urgency 2 · Scope 2
 
