@@ -39,6 +39,14 @@ structure, frontmatter, components, and formatting — leave the body text alone
 unless the user explicitly asks otherwise. If a task seems to require medical
 judgment, stop and hand it back to the user.
 
+**Exception — `what-is-pots.mdx` is a throwaway demo article.** Its entire body
+(prose, figures, callouts, everything) is placeholder text and component demos,
+not real content. Do not be careful about preserving anything in it, and do not
+ask before editing it. Use it as the default place to demo and test new
+inline-content features (Callout, Figure, future prose components) whenever a
+feature needs a live example. This exception applies **only** to
+`what-is-pots.mdx`; every other article follows the rules above.
+
 ### Accessibility is not a POTS research question
 
 POTS does not typically cause symptoms that interfere with website
@@ -150,6 +158,19 @@ is required; `caption` and `width` (`"full"` default \| `"partial"` = 60%,
 centered) are optional. `Figure` uses `astro:assets` `<Image>`, so files are
 optimized and resized at build time.
 
+**Callouts**: `<Callout type="note">…body…</Callout>` renders a bordered,
+tinted admonition. Variants are `note`, `tip`, `warning`, and `anecdote`
+(the last marks personal experience vs. sourced info). No import — injected
+like `Cite` and `Figure`. `type` is required and must be a registry key (a
+typo fails the build); optional `title="..."` overrides that variant's default
+label for one callout without changing its icon or color. All variant data
+(label, accent color, inline-SVG icon) lives in
+`src/components/inlineContent/callout-variants.ts` — **adding a variant is one
+entry there**, with no CSS or type edits; shared styling (radius, padding,
+tint) lives once in `Callout.astro`. A single `--callout-accent` CSS custom
+property, set inline per callout from the registry, drives the border, icon,
+label, and background tint together.
+
 Frontmatter carries **no citation data** — see "References and citations"
 below. Changing the schema means updating every existing article, so schema
 changes are a coordinated migration, not a one-file edit.
@@ -257,11 +278,13 @@ as a namespace:
   page navigation, references section, share buttons, medical disclaimer.
   Imported as `M`.
 - `src/components/inlineContent/` — components used inside MDX prose:
-  `Cite` (citation superscripts) and `Figure` (optimized images with
-  captions). Neither is **imported in articles** — `articles/[...slug].astro`
-  injects both through the MDX `components` prop, so `<Cite ids="..." />` and
-  `<Figure src="..." ... />` work in any article with zero boilerplate. New
-  prose components should be injected the same way.
+  `Cite` (citation superscripts), `Figure` (optimized images with captions),
+  and `Callout` (bordered note/tip/warning/anecdote admonitions; variant data
+  in `callout-variants.ts`). None is **imported in articles** —
+  `articles/[...slug].astro` injects them through the MDX `components` prop, so
+  `<Cite ids="..." />`, `<Figure src="..." ... />`, and `<Callout type="..." />`
+  work in any article with zero boilerplate. New prose components should be
+  injected the same way.
 
 Follow the existing pattern when adding a component: create it in the right
 folder, export it from that folder's `index.ts`, and use it through the
@@ -379,12 +402,14 @@ Planned phases, roughly in order:
    (content-collection move + reference redesign, July 2026).
 3. **Finish the article-writing system** — **fundamentals complete
    (2026-07-19):** all of section 1 of `Cleanup Proposals.md` is implemented.
-   Before moving to phase 4, the user wants a few inline-content additions
-   (see proposal 1.15): an anecdote callout, a collapsible toggle list, a
-   footnote system (design discussion needed — it must coexist cleanly with
-   the numbered citation superscripts), and distinct styling for external vs
-   internal links. New prose components inject via the `components` prop in
-   `articles/[...slug].astro`, like `Cite` and `Figure`.
+   The remaining inline-content additions (proposal 1.15) are in progress:
+   the **callout system is done (2026-08-16)** — a general `<Callout>` with
+   `note`/`tip`/`warning`/`anecdote` variants, which delivered the planned
+   anecdote callout as one variant. Still pending before phase 4: a collapsible
+   toggle list, a footnote system (design discussion needed — it must coexist
+   cleanly with the numbered citation superscripts), and distinct styling for
+   external vs internal links. New prose components inject via the `components`
+   prop in `articles/[...slug].astro`, like `Cite` and `Figure`.
 4. **Fix up the remaining systems** — search, navigation, collection pages,
    home. Starts after the 1.15 additions.
 5. **Final touches** — style cleanup, polish, and accessibility improvements.

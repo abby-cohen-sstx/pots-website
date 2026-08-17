@@ -1,0 +1,93 @@
+---
+/*
+ * A callout (admonition): a bordered, tinted block that flags a paragraph as a
+ * note, tip, warning, personal anecdote, etc. The look of each type lives in
+ * ./callout-variants.ts — this component only renders whichever one is asked for.
+ *
+ * Authored in MDX prose with no import — [...slug].astro injects it via
+ * <Content components={{ Callout }}>, same as Cite and Figure:
+ *
+ *     <Callout type="tip">
+ *       Increasing salt and fluid intake is a common first-line strategy.
+ *     </Callout>
+ *
+ *     <Callout type="warning" title="Talk to your doctor first">
+ *       Some medications interact badly with...
+ *     </Callout>
+ *
+ * type is required and must be a key of CALLOUT_VARIANTS (a typo fails the
+ * build). title is optional and overrides the variant's default label for one
+ * callout without changing its icon or color.
+ */
+
+import { CALLOUT_VARIANTS, type CalloutType } from "./callout-variants";
+
+interface Props {
+    type: CalloutType;
+    title?: string; // overrides the variant's default label for this one callout
+}
+
+const { type, title } = Astro.props;
+
+const variant = CALLOUT_VARIANTS[type];
+if (!variant) {
+    const available = Object.keys(CALLOUT_VARIANTS).join(", ");
+    throw new Error(`Callout: unknown type "${type}". Available types: ${available}`);
+}
+
+const label = title ?? variant.label;
+---
+
+<aside class="callout" style={`--callout-accent: ${variant.accent}`}>
+    <p class="callout__label">
+        <span class="callout__icon" aria-hidden="true" set:html={variant.icon} />
+        {label}
+    </p>
+    <div class="callout__body"><slot /></div>
+</aside>
+
+<style lang="scss">
+    @use "/src/styles/index" as *;
+
+    // Everything shared by every callout type lives here, written once. Change a
+    // value (e.g. border-radius) and every variant updates. The only thing that
+    // differs per type is --callout-accent, set inline above from the registry.
+    .callout {
+        margin: 1.5rem 0;
+        padding: 1rem 1.25rem;
+        border-left: 4px solid var(--callout-accent);
+        border-radius: .5rem;
+        // A faint wash of the accent color, mixed with transparency so it works
+        // on any page background. Swap for a flat color if color-mix is a problem.
+        background: color-mix(in srgb, var(--callout-accent) 7%, transparent);
+    }
+
+    .callout__label {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        margin: 0 0 .5rem;
+        font-weight: 600;
+        color: var(--callout-accent);
+    }
+
+    .callout__icon {
+        display: inline-flex;
+        flex-shrink: 0; // keep the icon from squishing if the label wraps
+        color: var(--callout-accent);
+
+        // The SVG arrives via set:html, so Astro's scoping never tags it —
+        // :global() reaches it, the same reason Figure needs it for <Image>.
+        :global(svg) {
+            width: 1.25rem;
+            height: 1.25rem;
+            display: block;
+        }
+    }
+
+    // Body text comes through <slot /> (MDX content), so it isn't scoped either.
+    // Trim the trailing margin of the last paragraph so padding stays even.
+    .callout__body :global(> :last-child) {
+        margin-bottom: 0;
+    }
+</style>

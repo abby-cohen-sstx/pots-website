@@ -324,21 +324,41 @@ conventions). If articles will include diagrams, this is a missing piece of
 image markup across written articles. Impacts: new component(s),
 `inlineContent/` barrel, possibly schema (hero images), writing conventions.
 
-### 1.15 Planned inline-content additions — pending (added 2026-07-19)
+### 1.15 Planned inline-content additions — partially done (added 2026-07-19)
 
 Status: **the fundamental article-system fixes (1.1–1.14) are all
 implemented.** The user wants the following before moving on to other areas
 of the site (all authored in prose and injected via the `components` prop in
 `articles/[...slug].astro`, like `Cite` and `Figure`):
 
-- **Anecdote callout** — a styled block marking paragraphs that are personal
-  anecdotes rather than sourced information.
+- ~~**Anecdote callout** — a styled block marking paragraphs that are personal
+  anecdotes rather than sourced information.~~ **✅ IMPLEMENTED 2026-08-16** as
+  one variant of a general callout system (see below).
 - **Collapsible toggle list** — expandable/collapsible content sections.
 - **Footnote system** — needs a design discussion first: footnote markers
   must coexist with the numbered citation superscripts without producing two
   competing number schemes in the same prose.
 - **External vs internal link styling** — visually distinguish links that
   leave the site from links to other articles.
+
+> **✅ Callout system — IMPLEMENTED 2026-08-16.** Rather than a one-off anecdote
+> block, built a general `<Callout>` admonition with four starter variants
+> (`note`, `tip`, `warning`, `anecdote`), injected via the `components` prop
+> like `Cite`/`Figure`. Architecture: a single registry
+> (`src/components/inlineContent/callout-variants.ts`) holds each variant's
+> label, accent color, and inline-SVG icon — **adding a variant is one entry
+> there**, with no CSS or type edits (the `type` prop's allowed values derive
+> from the registry via `keyof typeof`, so a typo fails the build). Shared
+> styling lives once in `Callout.astro`; the per-variant accent flows into that
+> one base rule through a `--callout-accent` CSS custom property, driving the
+> border, icon, label, and a `color-mix()` background tint together. Optional
+> `title` prop overrides a variant's label. Accessibility: `<aside>`, decorative
+> icon `aria-hidden`, label is a styled `<p>` (kept out of the outline/TOC).
+> Demoed in `what-is-pots.mdx`; verified via full `npm run build`. See CLAUDE.md
+> "Content and articles" for authoring.
+>
+> Remaining 1.15 items still pending: collapsible toggle list, footnote system
+> (design discussion first), external vs internal link styling.
 
 ---
 
