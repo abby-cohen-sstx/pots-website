@@ -1,5 +1,6 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
+import { getPublishedArticles } from '@/globals/serverUtilities';
 import MarkdownLayout from '@/layouts/MarkdownLayout.astro';
 import { Cite, Figure, Callout, Toggle, Link } from '@/components/inlineContent';
 
@@ -7,7 +8,7 @@ import { Cite, Figure, Callout, Toggle, Link } from '@/components/inlineContent'
 // params = where the page lives
 // props = what the page knows
 export async function getStaticPaths() {
-    const articles = await getCollection("articles");
+    const articles = await getPublishedArticles();
     return articles.map((article) => ({
         params: { slug: article.id }, // { slug: "what-is-pots" } -> /articles/what-is-pots
         props: { article }, // the entire article object stored in the collection

@@ -1,9 +1,25 @@
 import { ARTICLE_ORDER } from "@/globals/articleOrder";
 import { getCollection } from "astro:content";
 
-export async function sortArticles() {
-    
+// All articles that should appear on the built site. Drafts (frontmatter
+// `draft: true`) are excluded from the PRODUCTION build only — during
+// `astro dev` (import.meta.env.PROD === false) they stay visible so a draft can
+// be previewed while writing. Every code path that enumerates articles routes
+// through this, so setting `draft: true` removes an article from its own page,
+// every listing, the nav, prev/next, and search all at once.
+export async function getPublishedArticles() {
     const articles = await getCollection("articles");
+
+    if (import.meta.env.PROD) {
+        return articles.filter((article) => !article.data.draft);
+    }
+
+    return articles;
+}
+
+export async function sortArticles() {
+
+    const articles = await getPublishedArticles();
 
     /*
     Format:

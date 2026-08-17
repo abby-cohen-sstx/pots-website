@@ -1,7 +1,7 @@
-import { getCollection } from "astro:content";
+import { getPublishedArticles } from "@/globals/serverUtilities";
 
 async function getArticles() {
-    const articles = (await getCollection("articles"));
+    const articles = (await getPublishedArticles());
 
     return articles.map(article => ({
         title: article.data.title,

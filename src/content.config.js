@@ -24,6 +24,11 @@ const articles = defineCollection({
         updatedDate: z.date().optional(),
         collection: z.enum(COLLECTION_LIST),
         type: z.enum(["Overviews", "Deep Dives", "Resources"]),
+        // Publishing control. Omit it (or set false) for a normal article;
+        // set `draft: true` to keep the article out of the production build.
+        // .default(false) makes the field optional in frontmatter but always a
+        // boolean after parsing, so consumers can read `data.draft` with no guard.
+        draft: z.boolean().default(false),
     }),
 });
 

@@ -1,0 +1,97 @@
+---
+title: 'Inline Components Cheat Sheet' # browser tab title
+header: 'Components Cheat Sheet' # on-page h1
+subheader: 'How to use inline components and their variants' # styled <p> below header
+description: 'Test article for demo purposes only' # meta description
+pubDate: 2009-08-28 # bare YAML date with no quotes
+updatedDate: 2026-08-28 # optional; when present shows as "last updated"
+collection: "About POTS" # must be a value in COLLECTION_LIST
+type: "Overviews" # Overviews | Deep Dives | Resources
+draft: true # optional, default = false; when true, hide from published website but show in dev server
+---
+
+## Step 1: Write in Obsidian
+- Use headings ## through ####
+- Use plain markdown links
+- Either type components directly in Obsidian, or add placeholders and replace later
+
+## Step 2: Move to MDX
+- Pick a kebab-case-filename unique to the article
+- Format frontmatter (see above)
+- Fix any components if necessary
+- Add article ID to src/globals/articleOrder.ts (or don't; the article will sort to the end)
+- Move any images to src/images/articles/
+
+## Step 3: Build to Validate
+- Run npm run build to validate (don't rely on run dev only)
+
+## Component Examples
+
+### Citations
+Single citation.<Cite ids="lauPosturalOrthostaticTachycardia2026" /> Insert automatically using @@ in Obsidian.
+Multiple citations.<Cite ids="lauPosturalOrthostaticTachycardia2026 quNavigatingComplexityPostural2024a" /> Manual formatting needed to combine into a single cite component.
+Just separate each id by a space. Order doesn't matter.
+
+### Links
+[external link](https://example.com) vs. [internal link](/articles/what-is-pots/) styling happens automatically. Use standard markdown link format.
+
+### Toggles
+<Toggle summary="Basic toggle list; summary does not have **rich** text and cannot include a citation">
+Interior contents can include anything, including **rich text** and citations.<Cite ids="lauPosturalOrthostaticTachycardia2026" />
+</Toggle>
+
+<Toggle>
+<span slot="summary">Summary line containing a citation<Cite ids="lauPosturalOrthostaticTachycardia2026" /> or **rich** text achieved using a span and slot</span>
+
+^ empty line is mandatory. As usual, interior contents can contain anything, including **rich text** and citations.<Cite ids="lauPosturalOrthostaticTachycardia2026" />
+</Toggle>
+
+#### Accordion Lists
+You can also create an accordian list where opening one item closes all others by adding a `group` property:
+<Toggle summary="Accordion item one" group="group a">
+Accordion 1 contents
+</Toggle>
+
+<Toggle summary="Accordion item two" group="group a">
+Accordion 2 contents
+</Toggle>
+
+<Toggle group="group a">
+<span slot="summary">Accordion item 3 with **rich text** and citations.<Cite ids="lauPosturalOrthostaticTachycardia2026" /></span>
+
+Accordion 3 contents
+</Toggle>
+
+### Callouts
+`type` must match one of the options in `components/inlineContent/callout-variants.ts`.
+`title` is an optional property which overrides the default title.
+
+<Callout type="tip">
+Default tip-type callout
+</Callout>
+
+<Callout type="warning">
+Default warning-type callout
+</Callout>
+
+<Callout type="warning" title="Custom title">
+Warning-type callout with custom title
+</Callout>
+
+### Figures
+- `src` must point to an image in `src/images/articles/`
+- Use `alt` for alt text (required; use "" for purely decorational images)
+- `width` can be set to `full` or `partial.` Defaults to `full`
+- The caption is optional and goes in the component **body** (not a prop), so it can include **rich text** and citations
+
+
+Full width image:
+<Figure src="placeholder.jpg" alt="Placeholder image" width="full" />
+
+Partial width image:
+<Figure src="placeholder.jpg" alt="Placeholder image" width="partial" />
+
+Full width with caption:
+<Figure src="placeholder.jpg" alt="Placeholder image" width="full">
+Demo **caption** with a citation.<Cite ids="lauPosturalOrthostaticTachycardia2026" />
+</Figure>

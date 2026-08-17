@@ -309,7 +309,7 @@ drawer). Impacts: `TableOfContents.astro` + `MarkdownLayout.astro` script.
 
 > **✅ IMPLEMENTED 2026-07-19** — `Figure.astro` in `inlineContent/`, injected
 > via the `components` prop like `Cite`. Authored as `<Figure src="file.png"
-> alt="..." caption="..." width="full|partial" />`; images live in
+> alt="..." width="full|partial">caption</Figure>`; images live in
 > `src/images/articles/` and are resolved by filename via `import.meta.glob`
 > (unknown filename fails the build listing available files); rendered with
 > `astro:assets` `<Image>` for build-time optimization. `placeholder.jpg`

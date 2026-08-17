@@ -4,6 +4,7 @@ A resource site for patients with POTS (Postural Orthostatic Tachycardia Syndrom
 
 ## Claude References
 - `Cleanup Proposals.md` contains a report of all proposed bug fixes and changes; items already done are marked **✅ IMPLEMENTED** with a date, everything else is still pending
+- `WORKFLOW.md` documents the article-authoring pipeline: drafting in Obsidian (mixing raw MDX tags and Obsidian-native syntax), the ZotFlow citation setup that inserts finished `<Cite>` tags, and converting/moving a finished draft into an `.mdx` content-collection entry
 
 ## Purpose
 
@@ -101,6 +102,26 @@ Ask up front, before starting the work, since the answer changes the whole shape
 of the response. A short question is enough — do not write out both options in
 full each time.
 
+### Ask instead of assuming or spinning
+
+When the way forward is unclear, **stop and ask rather than guessing.** Check in
+with the user — do not just push ahead — when any of these is true:
+
+- **The request is ambiguous.** If there is more than one reasonable reading of
+  what is being asked and they lead to different work, ask which is meant
+  *before* starting. Do not silently pick the most likely interpretation and
+  build on it.
+- **You are stuck or going in circles.** If you notice yourself repeating the
+  same reasoning without making progress, say so and ask, instead of looping.
+- **A simple problem is taking too long.** If something that should be
+  straightforward is turning into a long, tangled effort, treat that as a signal
+  you may be overcomplicating it — pause, name it, and ask. A short question
+  often surfaces a much simpler path.
+
+A brief, specific question costs far less than confidently doing the wrong thing
+or burning time down a wrong path. This holds even in ship mode: ship mode means
+implementing without hand-holding, **not** guessing at ambiguous requirements.
+
 ## Tech stack
 
 - **Astro 6** — static site generator; `.astro` components with a frontmatter
@@ -139,6 +160,7 @@ Article frontmatter is validated by a Zod schema in `src/content.config.js`:
 | `updatedDate`    | Optional; when present, shown as the "Last updated" date        |
 | `collection`     | One of the values in `COLLECTION_LIST`                          |
 | `type`           | `Overviews` \| `Deep Dives` \| `Resources`                      |
+| `draft`          | Optional (default `false`); `true` excludes the article from the production build, still visible in `astro dev` |
 
 The article page shows "Last updated: <date>" using `updatedDate ?? pubDate`,
 formatted with `timeZone: "UTC"` (YAML dates parse to midnight UTC; local
@@ -151,12 +173,14 @@ is the top section level. `MarkdownLayout` styles `h2`–`h4` in prose;
 silently excluded from the TOC — a stray `#` or `#####` is a writing error).
 
 **Images**: article images live in `src/images/articles/` and are placed in
-prose with `<Figure src="filename.png" alt="..." caption="..."
-width="partial" />` (no import — injected like `Cite`). `src` is the bare
-filename; an unknown filename fails the build listing available files. `alt`
-is required; `caption` and `width` (`"full"` default \| `"partial"` = 60%,
-centered) are optional. `Figure` uses `astro:assets` `<Image>`, so files are
-optimized and resized at build time.
+prose with `<Figure src="filename.png" alt="..." width="partial">caption…
+</Figure>` (no import — injected like `Cite`). `src` is the bare filename; an
+unknown filename fails the build listing available files. `alt` is required;
+`width` (`"full"` default \| `"partial"` = 60%, centered) is optional. The
+**caption is the component body** (its children), not a prop — so it can hold
+Markdown and components like `<Cite>`; omit the body for no caption. `Figure`
+uses `astro:assets` `<Image>`, so files are optimized and resized at
+build time.
 
 **Callouts**: `<Callout type="note">…body…</Callout>` renders a bordered,
 tinted admonition. Variants are `note`, `tip`, `warning`, and `anecdote`

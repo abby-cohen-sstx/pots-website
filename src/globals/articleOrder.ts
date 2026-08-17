@@ -3,6 +3,7 @@ export const ARTICLE_ORDER = [
   // --- ABOUT POTS ---
   // Overviews
   "what-is-pots",
+  "inline-components-cheat-sheet",
   "how-is-pots-diagnosed",
   "pots-subtypes",
   "nervous-system-introduction",
