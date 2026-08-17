@@ -43,6 +43,16 @@ The name focuses on heart rate, but POTS affects more than the heart<Cite ids="s
 
 POTS symptoms often fluctuate. Heat, dehydration, menstrual cycles, infections, poor sleep, large meals, alcohol, standing still, and overexertion can worsen symptoms. Lying down, fluids, salt when medically appropriate, compression garments, pacing, and structured conditioning often reduce symptom burden. Fluctuation does not mean the illness is imaginary. It reflects a control system that reacts strongly to context.
 
+<Toggle summary="PLACEHOLDER toggle with a citation inside">
+PLACEHOLDER body content inside a collapsible toggle. Because the toggle body is a `<slot />`, it accepts any MDX — including the `<Cite>` component, which the build-time citation plugin numbers and links just like a citation in the main prose.<Cite ids="quNavigatingComplexityPostural2024a" />
+</Toggle>
+
+<Toggle>
+<span slot="summary">PLACEHOLDER summary line with a citation in it<Cite ids="rajDiagnosisManagementPostural2022" /></span>
+
+PLACEHOLDER body. This toggle has no `summary` prop — its label comes from a `slot="summary"` instead, which is why the label can hold the `<Cite>` above (the plain-text prop cannot).
+</Toggle>
+
 ## POTS as dysautonomia
 
 POTS belongs to a broader category called dysautonomia<Cite ids="steinbergNarrativeReviewPostural2023 rajDiagnosisManagementPostural2022" />. Dysautonomia means dysfunction of the autonomic nervous system, the system that regulates heart rate, blood pressure, sweating, digestion, temperature control, bladder function, and other automatic processes.
@@ -76,6 +86,14 @@ The symptoms also resemble anxiety in some moments.<Cite ids="xuPediatricPostura
 #### What POTS is not
 
 POTS is not a structural heart disease in most patients. It is not the same as a heart rhythm disorder, although clinicians sometimes test for arrhythmias when symptoms require it. It is not diagnosed from a single high heart rate reading after stress, caffeine, fever, dehydration, or exercise. It is also not defined by fainting alone. Some people with POTS faint, but many do not.
+
+<Toggle summary="PLACEHOLDER accordion item one" group="demo-faq">
+PLACEHOLDER content for the first accordion item. Because these two toggles share `group="demo-faq"`, opening this one closes the other.
+</Toggle>
+
+<Toggle summary="PLACEHOLDER accordion item two" group="demo-faq">
+PLACEHOLDER content for the second accordion item. Only one item in the group can be open at a time.
+</Toggle>
 
 #### Why diagnosis helps
 

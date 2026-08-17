@@ -171,6 +171,17 @@ tint) lives once in `Callout.astro`. A single `--callout-accent` CSS custom
 property, set inline per callout from the registry, drives the border, icon,
 label, and background tint together.
 
+**Toggles**: `<Toggle summary="...">…body…</Toggle>` renders a collapsible
+section built on native `<details>`/`<summary>` (keyboard-operable, works with
+no JS). Stack several for a "toggle list"; give a shared `group` to make them an
+accordion — opening one closes the others, via the native `name` attribute, no
+script. `summary` is the plain-text label; for a **rich** label (bold, a link, a
+`<Cite>`) pass a `slot="summary"` instead — **but keep it on its own line with a
+blank line before the body**, or MDX merges it into the body paragraph and the
+label is lost (the component throws with that hint). The default body `<slot>`
+accepts any MDX including `<Cite>`; the remark plugin walks the whole tree, so a
+citation nested in a toggle is numbered like any other.
+
 Frontmatter carries **no citation data** — see "References and citations"
 below. Changing the schema means updating every existing article, so schema
 changes are a coordinated migration, not a one-file edit.
@@ -279,12 +290,13 @@ as a namespace:
   Imported as `M`.
 - `src/components/inlineContent/` — components used inside MDX prose:
   `Cite` (citation superscripts), `Figure` (optimized images with captions),
-  and `Callout` (bordered note/tip/warning/anecdote admonitions; variant data
-  in `callout-variants.ts`). None is **imported in articles** —
-  `articles/[...slug].astro` injects them through the MDX `components` prop, so
-  `<Cite ids="..." />`, `<Figure src="..." ... />`, and `<Callout type="..." />`
-  work in any article with zero boilerplate. New prose components should be
-  injected the same way.
+  `Callout` (bordered note/tip/warning/anecdote admonitions; variant data in
+  `callout-variants.ts`), and `Toggle` (native-`<details>` collapsible sections;
+  supports accordion grouping and a `slot="summary"` for rich labels). None is
+  **imported in articles** — `articles/[...slug].astro` injects them through the
+  MDX `components` prop, so `<Cite ids="..." />`, `<Figure src="..." ... />`,
+  `<Callout type="..." />`, and `<Toggle summary="..." />` work in any article
+  with zero boilerplate. New prose components should be injected the same way.
 
 Follow the existing pattern when adding a component: create it in the right
 folder, export it from that folder's `index.ts`, and use it through the
@@ -403,12 +415,13 @@ Planned phases, roughly in order:
 3. **Finish the article-writing system** — **fundamentals complete
    (2026-07-19):** all of section 1 of `Cleanup Proposals.md` is implemented.
    The remaining inline-content additions (proposal 1.15) are in progress:
-   the **callout system is done (2026-08-16)** — a general `<Callout>` with
-   `note`/`tip`/`warning`/`anecdote` variants, which delivered the planned
-   anecdote callout as one variant. Still pending before phase 4: a collapsible
-   toggle list, a footnote system (design discussion needed — it must coexist
-   cleanly with the numbered citation superscripts), and distinct styling for
-   external vs internal links. New prose components inject via the `components`
+   the **callout system and the collapsible toggle list are done (2026-08-16)** —
+   `<Callout>` (note/tip/warning/anecdote variants, delivering the planned
+   anecdote callout) and `<Toggle>` (native-`<details>` collapsible sections with
+   accordion grouping and rich-summary slots). Still pending before phase 4: a
+   footnote system (design discussion needed — it must coexist cleanly with the
+   numbered citation superscripts), and distinct styling for external vs internal
+   links. New prose components inject via the `components`
    prop in `articles/[...slug].astro`, like `Cite` and `Figure`.
 4. **Fix up the remaining systems** — search, navigation, collection pages,
    home. Starts after the 1.15 additions.

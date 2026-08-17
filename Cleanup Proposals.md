@@ -334,7 +334,8 @@ of the site (all authored in prose and injected via the `components` prop in
 - ~~**Anecdote callout** — a styled block marking paragraphs that are personal
   anecdotes rather than sourced information.~~ **✅ IMPLEMENTED 2026-08-16** as
   one variant of a general callout system (see below).
-- **Collapsible toggle list** — expandable/collapsible content sections.
+- ~~**Collapsible toggle list** — expandable/collapsible content sections.~~
+  **✅ IMPLEMENTED 2026-08-16** as the `<Toggle>` component (see below).
 - **Footnote system** — needs a design discussion first: footnote markers
   must coexist with the numbered citation superscripts without producing two
   competing number schemes in the same prose.
@@ -357,8 +358,36 @@ of the site (all authored in prose and injected via the `components` prop in
 > Demoed in `what-is-pots.mdx`; verified via full `npm run build`. See CLAUDE.md
 > "Content and articles" for authoring.
 >
-> Remaining 1.15 items still pending: collapsible toggle list, footnote system
-> (design discussion first), external vs internal link styling.
+> Remaining 1.15 items still pending: footnote system (design discussion first)
+> and external vs internal link styling.
+
+> **✅ Collapsible toggle list — IMPLEMENTED 2026-08-16.** Built `<Toggle>`
+> (`src/components/inlineContent/Toggle.astro`), injected via the `components`
+> prop like the others. Authored as `<Toggle summary="...">body</Toggle>`; stack
+> several for a "toggle list," or give a shared `group` to make an accordion.
+> Design:
+> - **Native `<details>`/`<summary>`** foundation — keyboard-operable and works
+>   with no JS; no client script ships. The disclosure triangle is replaced by a
+>   CSS-rotated chevron.
+> - **Accordion via the native `name` attribute** (the `group` prop) — sharing a
+>   name makes toggles mutually exclusive, again with zero JS.
+> - **Rich summary via `slot="summary"`** — the plain-text `summary` prop can't
+>   hold components, so a named slot (with a `<slot name="summary">{summary}</slot>`
+>   fallback) lets the label carry a `<Cite>`, bold, or a link. A guard requires
+>   at least one of prop/slot.
+> - Accessibility: visible `:focus-visible` ring, chevron `aria-hidden`.
+>
+> **MDX gotcha found and documented:** a `slot="summary"` element must be a
+> DIRECT child of `<Toggle>`, but MDX merges an inline element into the adjacent
+> body paragraph unless a blank line separates them — which silently routes the
+> label to the default slot and empties the summary. Fix: keep the slot element
+> on its own line with a blank line before the body. Baked into the component's
+> doc comment and its guard's error message.
+>
+> Also demoed: a `<Cite>` inside a toggle body and inside a summary slot, both
+> numbered correctly by the remark plugin (its tree walk is recursive, so nesting
+> doesn't matter). Verified via full `npm run build`. See CLAUDE.md "Content and
+> articles" for authoring.
 
 ---
 

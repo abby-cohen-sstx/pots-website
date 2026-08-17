@@ -1,0 +1,126 @@
+---
+/*
+ * A collapsible toggle: a click-to-expand section with an always-visible
+ * summary line. Built on the native <details>/<summary> elements, so it is
+ * keyboard-operable and works even with JavaScript disabled — no client script.
+ *
+ * Authored in MDX prose with no import — [...slug].astro injects it via
+ * <Content components={{ Toggle }}>, same as Cite/Figure/Callout:
+ *
+ *     <Toggle summary="What is a tilt table test?">
+ *       The body content, any Markdown, hidden until the summary is clicked.
+ *     </Toggle>
+ *
+ * Stack several to make a "toggle list." Give a shared `group` to make them an
+ * accordion (opening one closes the others), via the native `name` attribute:
+ *
+ *     <Toggle summary="Question 1" group="faq">...</Toggle>
+ *     <Toggle summary="Question 2" group="faq">...</Toggle>
+ *
+ * For a rich summary line (bold, a link, a <Cite>), skip the `summary` prop and
+ * pass a `slot="summary"` instead — the plain-text prop can't hold components.
+ * NOTE the blank line before the body: it keeps the slot element a DIRECT child
+ * of <Toggle>, which is what MDX needs to route it to the named slot. Without
+ * the blank line, MDX merges it into the body paragraph and the label vanishes.
+ *
+ *     <Toggle>
+ *       <span slot="summary">A claim that needs a source<Cite ids="key" /></span>
+ *
+ *       Body content here.
+ *     </Toggle>
+ *
+ * Props:
+ *   summary — the always-visible clickable label (plain text). Optional ONLY
+ *             when a `slot="summary"` is provided instead.
+ *   open    — start expanded (default false).
+ *   group   — optional accordion name; toggles sharing one are mutually exclusive.
+ */
+
+interface Props {
+    summary?: string;
+    open?: boolean;
+    group?: string;
+}
+
+const { summary, open = false, group } = Astro.props;
+
+// The summary line can come from the plain-text `summary` prop OR a
+// `slot="summary"` (for rich content). Require at least one — an empty summary
+// would be an unlabelled, invisible control.
+const hasSummarySlot = Astro.slots.has("summary");
+if (!summary && !hasSummarySlot) {
+    throw new Error(
+        'Toggle: provide a `summary` prop or a `slot="summary"` — the summary line needs a label. ' +
+        'If you passed a slot, keep it on its own line with a blank line before the body, so MDX ' +
+        'leaves it a direct child (otherwise it gets merged into the body and the slot is lost).'
+    );
+}
+
+// chevron-right; CSS rotates it to point down when the toggle is open
+const chevron = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`;
+---
+
+<details class="toggle" open={open} name={group}>
+    <summary class="toggle__summary">
+        <span class="toggle__chevron" aria-hidden="true" set:html={chevron} />
+        <slot name="summary">{summary}</slot>
+    </summary>
+    <div class="toggle__body"><slot /></div>
+</details>
+
+<style lang="scss">
+    @use "/src/styles/index" as *;
+
+    .toggle {
+        margin: 1.5rem 0;
+        border: 1px solid #e2e2e2;
+        border-radius: .5rem;
+        // Clip the summary's background fill to the rounded corners.
+        overflow: hidden;
+    }
+
+    .toggle__summary {
+        display: flex; // also removes the default disclosure triangle in most browsers
+        align-items: center;
+        gap: .5rem;
+        padding: .75rem 1rem;
+        cursor: pointer;
+        font-weight: 600;
+        background: $light-gray-background;
+        // Belt-and-suspenders marker removal for browsers that keep it under flex.
+        list-style: none;
+
+        &::-webkit-details-marker { display: none; }
+
+        &:hover { background: #f2f2f2; }
+
+        // Keyboard focus ring (summary is natively focusable). Inset so the
+        // .toggle's overflow:hidden doesn't clip it.
+        &:focus-visible {
+            outline: 2px solid $link-color;
+            outline-offset: -2px;
+        }
+    }
+
+    // Rotate the chevron to point down when the section is open.
+    .toggle__chevron {
+        display: inline-flex;
+        flex-shrink: 0;
+        color: $light-gray-text;
+        transition: transform .2s ease;
+
+        // The SVG arrives via set:html, so it isn't scoped — :global() reaches it.
+        :global(svg) { width: 1rem; height: 1rem; display: block; }
+    }
+    .toggle[open] .toggle__chevron { transform: rotate(90deg); }
+
+    // A divider between the summary and the revealed body, only when open.
+    .toggle[open] .toggle__summary { border-bottom: 1px solid #e2e2e2; }
+
+    .toggle__body {
+        padding: .75rem 1rem;
+
+        // Body text comes through <slot /> (MDX), so it isn't scoped either.
+        :global(> :last-child) { margin-bottom: 0; }
+    }
+</style>
